@@ -8,7 +8,7 @@
   ],
   "main": "./dist/metacitygl.umd.js",
   "module": "./dist/metacitygl.js",
-  "types": "./types/index.d.ts",
+  "types": "./dist/metacitygl/main.d.ts",
   "exports": {
     ".": {
       "import": "./dist/metacitygl.js",
