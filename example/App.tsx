@@ -1,16 +1,14 @@
-import React, { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import React from 'react'
 import './App.css'
-import { hello } from '../metacitygl/main'
+import { VisualizationCanvas } from '../metacitygl/view'
+import { MetacityGL } from '../metacitygl/metacitygl'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [engine] = React.useState(new MetacityGL());
 
-  hello();
-  
   return (
-    <div className="App">
-      TODO
+    <div id="app">
+      <VisualizationCanvas engine={engine}/>
     </div>
   )
 }
