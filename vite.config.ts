@@ -6,7 +6,7 @@ import dts from 'vite-plugin-dts'
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, 'metacitygl/main.ts'),
+      entry: resolve(__dirname, 'metacitygl/metacitygl.ts'),
       name: 'MetacityGL',
       // the proper extensions will be added
       fileName: 'metacitygl'

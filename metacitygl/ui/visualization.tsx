@@ -1,14 +1,15 @@
 import React from "react";
-import { MetacityGL } from "./metacitygl";
+import { MetacityGL } from "../metacitygl";
 
 
-export interface VisualizationCanvasProps {
+export interface VisualizationProps {
     invertCopyrightColor?: boolean;
     hideCopyright?: boolean;
+    children?: React.ReactNode | React.ReactNode[];
     engine: MetacityGL;
 }
 
-export function VisualizationCanvas(props: VisualizationCanvasProps) {
+export function Visualization(props: VisualizationProps) {
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
     const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -21,12 +22,15 @@ export function VisualizationCanvas(props: VisualizationCanvasProps) {
                 container,
             });
         }
+
+        
     }, [canvasRef, containerRef, props.engine]);
 
 
     return (
         <div className="BananaGLContainer" ref={containerRef}>
             <canvas ref={canvasRef}></canvas>
+            { props.children }
         </div>
     );
 }

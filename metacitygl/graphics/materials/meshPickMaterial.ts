@@ -8,7 +8,6 @@ varying vec3 fscolor;
 void main(){
 	fscolor = idcolor;
 	vec3 transformed = position;
-
 	gl_Position = projectionMatrix * (modelViewMatrix * vec4( transformed, 1.0));
 }`;
 
@@ -20,7 +19,7 @@ void main() {
 }`;
 
 
-export class MesPickMaterial extends THREE.ShaderMaterial {
+export class MeshPickMaterial extends THREE.ShaderMaterial {
     constructor() {
         super({
             vertexShader: vs3D,

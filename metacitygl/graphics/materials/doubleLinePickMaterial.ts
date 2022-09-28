@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 
-
 const vs3D = `
-attribute vec3 color;
+attribute vec3 idcolor;
 attribute vec3 lineStart;
 attribute vec3 lineEnd;
 
 uniform float thickness;
+uniform float space;
 
 varying vec3 fscolor;
 
@@ -43,16 +43,21 @@ mat4 getRotationMat(vec3 vector)
 }
 
 void main(){
-	fscolor = color;
+	fscolor = idcolor;
 	vec3 transformed = position;
 	
     vec3 dir = lineEnd - lineStart;
     float dist = length(dir);
     mat4 rot = getRotationMat(dir);
 	float end = float(transformed.x >= 0.9);
+	
 	transformed.x = end * (dist + (transformed.x - 1.0) * thickness) + ((1.0 - end) * transformed.x * thickness); //subtract one because its the original length of the template line
+	
+	//offset in -y direction
 	transformed.y *= thickness;
+	transformed.y -= space;
 	transformed = lineStart + (rot * vec4(transformed, 1.0)).xyz;
+	
 	gl_Position = projectionMatrix * (modelViewMatrix * vec4( transformed, 1.0));
 }`;
 
@@ -64,11 +69,11 @@ void main() {
 }`;
 
 
-export class LineMaterial extends THREE.ShaderMaterial {
+export class DoubleLinePickMaterial extends THREE.ShaderMaterial {
     constructor() {
         super({
             uniforms: {
-                thickness: { value: 10 },
+                thickness: { value: 10 }
             },
             vertexShader: vs3D,
             fragmentShader: fs3D,

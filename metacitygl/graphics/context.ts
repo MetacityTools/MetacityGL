@@ -1,10 +1,10 @@
 import * as THREE from 'three';
-import { Navigation, NavigationProps } from './navigation';
-import { GPUPicker } from './gpuPicker';
-import { Renderer, RendererProps } from './renderer';
+import { Navigation, NavigationProps } from './core/navigation';
+import { GPUPicker } from './core/gpuPicker'
+import { Renderer, RendererProps } from './core/renderer';
 
 
-export interface GraphicsProps extends NavigationProps, RendererProps {
+export interface GraphicsContextProps extends NavigationProps, RendererProps {
     onFrame?: (time: number, timeMax: number) => void;
     container: HTMLDivElement;
 }
@@ -20,12 +20,12 @@ export class GraphicsContext {
 
     private speed_: number = 1;
     private time_: number = 0;
-    private timeframe_: [number, number] = [0, 0];
+    private timeframe_: [number, number] = [0, 1];
 
     private onFrameFn: ((time: number, timeMax: number) => void) | undefined;
     private beforeFrameUpdateFns: ((time: number) => void)[] = [];
 
-    constructor(props: GraphicsProps) {
+    constructor(props: GraphicsContextProps) {
         this.container = props.container;
         this.renderer = new Renderer(props, this.container);
         this.scene = new THREE.Scene();

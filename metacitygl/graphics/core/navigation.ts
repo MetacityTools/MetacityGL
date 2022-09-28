@@ -24,7 +24,7 @@ export class Navigation {
         this.set(new THREE.Vector3(...target), new THREE.Vector3(...position));
     }
 
-    set onchange(f: (target: THREE.Vector3, position: THREE.Vector3 ) => void) {
+    set onchange(f: ((target: THREE.Vector3, position: THREE.Vector3 ) => void)) {
         this.onchange_.push(f);
     }
 
