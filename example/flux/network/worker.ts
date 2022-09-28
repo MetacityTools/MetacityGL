@@ -30,7 +30,7 @@ self.onmessage = async function(e) {
             }
         );
 
-        zOffset += 0.000001;
+        zOffset -= 0.000001;
     }
 
     const response = asm.toBuffers();

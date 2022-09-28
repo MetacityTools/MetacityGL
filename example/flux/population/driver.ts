@@ -7,12 +7,14 @@ interface FluxPopulationDriverProps extends DriverProps {
     legendAPI: string;
     networkAPI: string;
     key?: string;
+    agentSize?: number;
 }
 
 export class FluxPopulationDriver extends Driver<FluxPopulationDriverProps> {
     private populationAPI: string;
     private legendAPI: string;
     private networkAPI: string;
+    private agentSize: number;
 
     constructor(props: FluxPopulationDriverProps) {
         super(props);
@@ -20,13 +22,18 @@ export class FluxPopulationDriver extends Driver<FluxPopulationDriverProps> {
         this.populationAPI = props.populationAPI + keySufix;
         this.networkAPI = props.networkAPI + keySufix;
         this.legendAPI = props.legendAPI + keySufix;
+        this.agentSize = props.agentSize || 10;
     }
 
     async onInit() {
         const worker = new Worker();
         
         worker.onmessage = (e) => {
-            console.log(e.data);
+            const model = Graphics.Models.AgentModel.create(e.data, {
+                size: this.agentSize,
+            });
+
+            this.engine.addModel(model, false);
         };
 
         worker.postMessage({

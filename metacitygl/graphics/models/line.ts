@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { GraphicsContext } from "../context";
 import { LineMaterial } from "../materials/lineMaterial";
 import { LinePickMaterial } from "../materials/linePickMaterial";
 import { LineData } from "../types";
@@ -41,6 +42,10 @@ export class LineModel extends THREE.InstancedMesh implements Model {
             (material as THREE.ShaderMaterial).uniformsNeedUpdate = true;
         }
         return mesh;
+    }
+
+    onAdd(context: GraphicsContext) {
+        //pass
     }
 
     toPickable() {

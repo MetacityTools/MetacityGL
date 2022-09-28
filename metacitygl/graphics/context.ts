@@ -18,9 +18,9 @@ export class GraphicsContext {
     readonly picker: GPUPicker;
     readonly container: HTMLDivElement;
 
-    private speed_: number = 1;
+    private speed_: number = 0;
     private time_: number = 0;
-    private timeframe_: [number, number] = [0, 1];
+    private timeframe_: [number, number] = [Infinity, -Infinity];
 
     private onFrameFn: ((time: number, timeMax: number) => void) | undefined;
     private beforeFrameUpdateFns: ((time: number) => void)[] = [];
@@ -55,13 +55,17 @@ export class GraphicsContext {
     }
 
     private updateTime(time: number) {
-        const delta = (Date.now() - time) / 1000 * this.speed_;
-        time = Date.now();
-        this.time_ = (this.time_ + delta) % this.timeframe_[1];
+        if (this.speed_ !== 0) {
+            const delta = (Date.now() - time) / 1000 * this.speed_;
+            this.time_ = (this.time_ + delta) % this.timeframe_[1];
+        }
+        
         this.scene.userData.time = this.time_;
-
+        
         if (this.onFrameFn)
-            this.onFrameFn(this.time_, this.timeframe_[1]);
+        this.onFrameFn(this.time_, this.timeframe_[1]);
+        
+        time = Date.now();
         return time;
     }
 
@@ -69,13 +73,26 @@ export class GraphicsContext {
         return this.timeframe_;
     }
 
+    get timeRunning() {
+        return this.timeframe_[1] !== -Infinity;
+    }
+
     set time(t: number) {
         this.time_ = t;
         this.scene.userData.time = t;
     }
 
+    set timeframe(timeframe: [number, number]) {
+        this.timeframe_[0] = Math.min(this.timeframe_[0], timeframe[0]);
+        this.timeframe_[1] = Math.max(this.timeframe_[1], timeframe[1]);
+
+        if (this.speed_ === 0)
+            this.speed_ = 1;
+    }
+
     set speed(value: number) {
-        this.speed_ = value;
+        if(this.timeRunning)
+            this.speed_ = value;
     }
 
     set onBeforeFrame(fn: (time: number) => void) {

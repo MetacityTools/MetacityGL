@@ -12,6 +12,32 @@ export interface MeshData {
     colors?: Float32Array;
 } 
 
+export interface AgentData {
+    positions: Float32Array[];
+    visible: Float32Array[];
+    timestamps: Float32Array;
+    colors: Float32Array;
+    dimensions: Float32Array;
+}
+
+export interface MovementData {
+    attrStart: THREE.InstancedBufferAttribute;
+    attrEnd: THREE.InstancedBufferAttribute;
+    attrVisible: THREE.InstancedBufferAttribute;
+    colors: THREE.InstancedBufferAttribute;
+    dimensions: THREE.InstancedBufferAttribute;
+    instance: THREE.BufferGeometry;
+}
+
+export interface GridData {
+    from: [number, number],
+    to: [number, number],
+    z: number,
+    major: number,
+    divideMajor: number,
+    color: number
+}
+
 export class vec3 {
     constructor(public x: number = 0, public y: number = 0, public z: number = 0) {}
     set(x: number, y: number, z: number) {

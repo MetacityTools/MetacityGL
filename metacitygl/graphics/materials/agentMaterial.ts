@@ -5,6 +5,8 @@ const vs3D = `
 attribute vec3 color;
 attribute vec3 positionStart;
 attribute vec3 positionEnd;
+attribute vec3 dimensions;
+attribute float visible;
 
 uniform float time;
 uniform float timeStart;
@@ -54,6 +56,13 @@ void main(){
 		gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
 		return;
 	}
+
+	if (visible < 0.5) {
+		gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
+		return;
+	}
+
+	transformed = transformed * dimensions;
 
     vec3 dir = positionEnd - positionStart;
 	if (length(dir) > 0.0) {

@@ -73,7 +73,8 @@ export class DoubleLinePickMaterial extends THREE.ShaderMaterial {
     constructor() {
         super({
             uniforms: {
-                thickness: { value: 10 }
+                thickness: { value: 20 },
+				space: { value: 2 }
             },
             vertexShader: vs3D,
             fragmentShader: fs3D,

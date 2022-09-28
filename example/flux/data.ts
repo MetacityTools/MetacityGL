@@ -88,6 +88,7 @@ export interface PopulationData {
                     ti: number;
                     oid: string;
                     did: string;
+                    embarked: boolean;
                 }[],
                 oid: string,
                 type: string,

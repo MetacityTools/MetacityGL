@@ -1,16 +1,18 @@
 import { GraphicsContextProps, GraphicsContext } from "./graphics/context";
-import { Visualization } from "./ui/visualization";
 import { Driver, DriverProps } from "./drivers/driver";
 import { Model } from "./graphics/models/model";
 import * as Graphics from "./graphics";
+import * as Components from "./components";
+import { HoverLabels } from "./graphics/core/labels";
 
 interface MetacityGLProps extends GraphicsContextProps {
-
+    onHover?: (id: number, metadata: any) => HTMLElement;
 }
 
 class MetacityGL {
     context: GraphicsContext | undefined;
     drivers: Driver<DriverProps>[] = [];
+    private onInitFns_: (() => void)[] = []; 
     
     private initialized: boolean = false;
     
@@ -30,17 +32,30 @@ class MetacityGL {
             });
         }
 
+        const labels = new HoverLabels(this.context.labelScene);
+
         props.canvas.onpointermove = (e) => {
             const x = e.clientX;
             const y = e.clientY;
             const id = this.context!.picker.pick(x, y);
             const metadata = this.getMetadata(id);
-            if (metadata) {
+            if (metadata && props.onHover) {
                 console.log(id);
                 console.log(metadata);
-                //TODO hover dialog
+                labels.add(metadata.bbox, props.onHover(id, metadata), id);
+            } else {
+                labels.clear();
             }
         }
+
+        props.canvas.onpointerup = (e) => {
+            this.context?.navigation.update();
+        };
+
+        this.onInitFns_.forEach((fn) => {
+            fn();
+        });
+        this.onInitFns_ = [];
     }
 
     addDriver(driver: Driver<DriverProps>) {
@@ -52,6 +67,7 @@ class MetacityGL {
     addModel(model: Model, pickable?: boolean) {
         if (this.context && model) {
             this.context.scene.add(model);
+            model.onAdd(this.context);
 
             if (pickable) {
                 const pickModel = model.clone();
@@ -60,6 +76,13 @@ class MetacityGL {
             }
         }
         return model;
+    }
+
+    set onInit(fn: () => void) {
+        if (this.initialized)
+            fn();
+        else
+            this.onInitFns_.push(fn);
     }
 
     private async initDriver(driver: Driver<DriverProps>) {
@@ -83,8 +106,8 @@ class MetacityGL {
 
 export {
     MetacityGL,
-    Visualization,
     Driver,
+    Components,
     Graphics
 }
 

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GraphicsContext } from '../context';
 import { MeshMaterial } from '../materials/meshMaterial';
 import { MeshPickMaterial } from '../materials/meshPickMaterial';
 import { MeshData } from '../types';
@@ -24,6 +25,10 @@ export class MeshModel extends THREE.Mesh implements Model {
         const mesh = new MeshModel(geometry, this.defaultMaterial);
         mesh.matrixAutoUpdate = false;
         return mesh;
+    }
+
+    onAdd(context: GraphicsContext) {
+        //pass
     }
 
     toPickable(): void {

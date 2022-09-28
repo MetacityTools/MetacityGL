@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { GraphicsContext } from "../context";
 import { DoubleLineMaterial } from "../materials/doubleLineMaterial";
 import { DoubleLinePickMaterial } from "../materials/doubleLinePickMaterial";
 import { LineData } from "../types";
@@ -36,13 +37,26 @@ export class DoubleLineModel extends THREE.InstancedMesh implements Model {
         const mesh = new DoubleLineModel(geometry, this.defaultMaterial, data.positions.length / 6);
         mesh.matrixAutoUpdate = false;
         mesh.frustumCulled = false; 
+        mesh.userData.originalColor = data.colors;
 
         mesh.onBeforeRender = (renderer, scene, camera, geometry, material, group) => {
-            (material as THREE.ShaderMaterial).uniforms.thickness.value = uniforms.thickness ?? 10;
+            (material as THREE.ShaderMaterial).uniforms.thickness.value = uniforms.thickness ?? 20;
             (material as THREE.ShaderMaterial).uniforms.space.value = uniforms.space ?? 2;
             (material as THREE.ShaderMaterial).uniformsNeedUpdate = true;
         }
         return mesh;
+    }
+
+    onAdd(context: GraphicsContext) {
+        //pass
+    }
+
+    setColors(colors: Float32Array) {
+        this.geometry.setAttribute('color', new THREE.InstancedBufferAttribute(colors, 3, true, 1));
+    }
+
+    restoreColors() {
+        this.geometry.setAttribute('color', new THREE.InstancedBufferAttribute(this.userData.originalColor, 3, true, 1));
     }
 
     toPickable() {

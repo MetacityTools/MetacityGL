@@ -10,7 +10,7 @@ export class GPUPicker {
     constructor(private renderer: THREE.WebGLRenderer, private camera: THREE.PerspectiveCamera) {}
 
 
-    addPickable(mesh: THREE.Mesh) {
+    addPickable(mesh: THREE.Object3D) {
         this.pickingScene.add(mesh);
     }
 
