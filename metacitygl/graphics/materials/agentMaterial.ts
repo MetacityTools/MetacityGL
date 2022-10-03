@@ -14,6 +14,7 @@ uniform float timeEnd;
 uniform float shift;
 
 varying vec3 fscolor;
+varying vec3 fsnormal;
 
 /**
  * Create rotation matrix from field vector.
@@ -50,6 +51,7 @@ mat4 getRotationMat(vec3 vector)
 
 void main(){
 	fscolor = color;
+	fsnormal = normal;
 	vec3 transformed = position;
 	
 	if (time < timeStart || time > timeEnd) {
@@ -78,9 +80,21 @@ void main(){
 
 const fs3D = `
 varying vec3 fscolor;
+varying vec3 fsnormal;
+uniform float grayscale;
+
+//light from the top
+vec3 light = vec3(0.0, 0.0, 1.0);
 
 void main() {
-	gl_FragColor = vec4(fscolor, 0.9);
+	//pseudo-phong shading
+    float diffuse = max(dot(fsnormal, light), 0.0);
+    vec3 phcolor = fscolor * diffuse * 0.1 + fscolor * 0.9;
+
+	float grs = phcolor.r * 0.2126 + phcolor.g * 0.7152 + phcolor.b * 0.0722;
+	vec3 gcolor = vec3(grs, grs, grs);
+	vec3 color = mix(phcolor, gcolor, grayscale);
+	gl_FragColor = vec4(color, 1.0);
 }`;
 
 
@@ -93,6 +107,7 @@ export class AgentMaterial extends THREE.ShaderMaterial {
                 timeStart: { value: 0 },
                 timeEnd: { value: 1 },
                 shift: { value: 0 },
+				grayscale: { value: 1 },
             },
             vertexShader: vs3D,
             fragmentShader: fs3D,

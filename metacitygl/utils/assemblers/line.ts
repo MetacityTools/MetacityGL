@@ -18,14 +18,12 @@ export class LineAssembler {
         this.colors.push(rgb[0], rgb[1], rgb[2]);
         const idcolor = colorHex(this.id);
         this.ids.push(idcolor[0], idcolor[1], idcolor[2]);
-
-        metadata["bbox"] = [
-            [ Math.min(from.x, to.x), Math.min(from.y, to.y), Math.min(from.z, to.z) ],
-            [ Math.max(from.x, to.x), Math.max(from.y, to.y), Math.max(from.z, to.z) ]
-        ];
-
         this.metadata[this.id] = metadata;
         this.id++;
+    }
+
+    pickTransferables(buffers: any) {
+        return [buffers.positions.buffer, buffers.colors.buffer, buffers.ids.buffer];
     }
 
     toBuffers() {

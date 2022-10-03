@@ -1,12 +1,9 @@
-import { vec3 } from "../../types";
 
-
+const MAJOR_WIDTH = 10;
+const MINOR_WIDTH = 1;
 
 export function gridXY(from: number[], to: number[], z: number, major: number, divideMajor: number) {
-    const xMajor = [];
-    const yMajor = [];
-    const xMinor = [];
-    const yMinor = [];
+    const positions: number[] = [];
     const minor = major / divideMajor;
 
     const xFrom = Math.floor(from[0] / major) * major;
@@ -16,22 +13,39 @@ export function gridXY(from: number[], to: number[], z: number, major: number, d
 
     for (let x = xFrom; x <= xTo; x += minor) {
         if(x % major === 0) {
-            xMajor.push(x, yFrom, z, x, yTo, z);
+            //xMajor.push(x, yFrom, z, x, yTo, z);
+            pushYLine(positions, x, yFrom, z, yTo, MAJOR_WIDTH);
         } else {
-            xMinor.push(x, yFrom, z, x, yTo, z);
+            pushYLine(positions, x, yFrom, z, yTo, MINOR_WIDTH);
         }
     }
 
     for (let y = yFrom; y <= yTo; y += minor) {
         if(y % major === 0) {
-            yMajor.push(xFrom, y, z, xTo, y, z);
+            //yMajor.push(xFrom, y, z, xTo, y, z);
+            pushXLine(positions, xFrom, y, z, xTo, MAJOR_WIDTH);
         } else {
-            yMinor.push(xFrom, y, z, xTo, y, z);
+            pushXLine(positions, xFrom, y, z, xTo, MINOR_WIDTH);
         }
     }
 
-    return {
-        majors: new Float32Array([...xMajor, ...yMajor]),
-        minors: new Float32Array([...xMinor, ...yMinor])
-    };
+    return new Float32Array(positions); 
+}
+
+function pushYLine(positions: any[], x: number, yFrom: number, z: number, yTo: number, width: number) {
+    positions.push(x - width * 0.5, yFrom, z);
+    positions.push(x + width * 0.5, yFrom, z);
+    positions.push(x + width * 0.5, yTo, z);
+    positions.push(x - width * 0.5, yFrom, z);
+    positions.push(x + width * 0.5, yTo, z);
+    positions.push(x - width * 0.5, yTo, z);
+}
+
+function pushXLine(positions: any[], xFrom: number, y: number, z: number, xTo: number, width: number) {
+    positions.push(xFrom, y - width * 0.5, z);
+    positions.push(xTo, y - width * 0.5, z);
+    positions.push(xTo, y + width * 0.5, z);
+    positions.push(xFrom, y - width * 0.5, z);
+    positions.push(xTo, y + width * 0.5, z);
+    positions.push(xFrom, y + width * 0.5, z);
 }

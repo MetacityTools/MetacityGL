@@ -1,4 +1,3 @@
-import { vec3 } from "../types";
 import { computeBBox } from "../utils/bbox";
 import { colorHex } from "../utils/color";
 import { computeNormals } from "../utils/normals";
@@ -26,6 +25,10 @@ export class MeshAssembler {
         metadata["bbox"] = computeBBox(vertices);
         this.metadata[this.id] = metadata;
         this.id++;
+    }
+
+    pickTransferables(buffers: any) {
+        return [buffers.positions.buffer, buffers.normals.buffer, buffers.colors.buffer, buffers.ids.buffer];
     }
 
     toBuffers() {

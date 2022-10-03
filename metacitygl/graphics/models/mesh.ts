@@ -1,8 +1,8 @@
 import * as THREE from 'three';
+import { MeshData } from '../../utils/types';
 import { GraphicsContext } from '../context';
 import { MeshMaterial } from '../materials/meshMaterial';
 import { MeshPickMaterial } from '../materials/meshPickMaterial';
-import { MeshData } from '../types';
 
 import { Model } from './model';
 
@@ -33,5 +33,10 @@ export class MeshModel extends THREE.Mesh implements Model {
 
     toPickable(): void {
         this.material = MeshModel.pickableMaterial;
+    }
+
+    set grayscale(value: number) {
+        (this.material as THREE.ShaderMaterial).uniforms.grayscale.value = value;
+        (this.material as THREE.ShaderMaterial).uniformsNeedUpdate = true;
     }
 }

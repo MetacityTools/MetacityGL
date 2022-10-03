@@ -48,3 +48,7 @@ export function colorStrToArr(str: string): number[] {
     const hex = colorStrToHex(str);
     return colorHex(hex);
 }
+
+export function colorHexToStr(hex: number): string {
+    return '#' + hex.toString(16).padEnd(6, '0');
+}

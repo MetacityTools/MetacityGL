@@ -15,6 +15,10 @@ export class PointsAssembler {
         this.ids.push(idcolor[0], idcolor[1], idcolor[2]);
     }
 
+    pickTransferables(buffers: any) {
+        return [buffers.positions.buffer, buffers.ids.buffer];
+    }
+
     toBuffers() {
         return {
             positions: new Float32Array(this.positions),

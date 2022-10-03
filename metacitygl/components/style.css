@@ -1,0 +1,180 @@
+.MetacityGLContainer {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+}
+
+.RenderingAreaContainer {
+    width: calc(100% - 20rem);
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.CanvasContainer {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.MetacityGLSidebar {
+    width: 20rem;
+    background: rgba(0, 0, 0, 0.95);
+    font-size: 1em;
+    color: #fff;
+    border-left: 1px solid #333;
+    overflow: auto;
+    scrollbar-color: #333 #555;
+    scrollbar-width: 0.5rem;
+}
+
+.MetacityGLSidebar::-webkit-scrollbar {
+    width: 0.5rem;
+}
+
+.MetacityGLSidebar::-webkit-scrollbar-track {
+    background: #333;
+}
+
+.MetacityGLSidebar::-webkit-scrollbar-thumb {
+    background-color: #555;
+}
+
+/* timeline */
+.timelineControls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0.5rem;
+    background: #222;
+    border-top: 1px solid #444;
+}
+
+/********** Range Input Styles **********/
+/*Range Reset*/
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Removes default focus */
+input[type="range"]:focus {
+    outline: none;
+}
+
+/***** Chrome, Safari, Opera and Edge Chromium styles *****/
+/* slider track */
+
+input[type="range"]::-webkit-slider-runnable-track {
+    background-color: #333;
+    height: 2rem;
+}
+
+input[type="range"]::-moz-range-track {
+    background-color: #333;
+    height: 2rem;
+}
+
+/* slider thumb */
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    /*custom styles*/
+    background-color: #AAA;
+    height: 2rem;
+    width: 1rem;
+}
+
+/* slider thumb */
+input[type="range"]::-moz-range-thumb {
+    border: none;
+    border-radius: 0;
+    /*custom styles*/
+    background-color: #AAA;
+    height: 2rem;
+    width: 1rem;
+}
+
+input[type="range"]:focus::-webkit-slider-thumb {
+
+}
+
+input[type="range"]:focus::-moz-range-thumb {
+
+}
+
+
+select.speed {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    background: #222;
+    color: #fff;
+    border: none;
+    padding: 0.5rem;
+    font-size: 0.8em;
+    margin-left: 1rem;
+}
+
+.timelabel {
+    color: #EEE;
+    font-size: 0.8em;
+    width: 10rem;
+    padding: 0.5rem;
+}
+
+.hoverDialog {
+    background: #333;
+    color: #fff;
+    padding: 0.5rem;
+    font-size: 0.8em;
+    z-index: 10;
+}
+
+pre {
+    padding: 0;
+    margin: 0;
+}
+
+.metacityLabel {
+    color: #888;
+    font-size: 0.8em;
+    padding: 1rem;
+}
+
+.metacityLabel a {
+    color: #EEE;
+}
+
+.play {
+    color: #FFF;
+    margin: 0 0.5rem;
+    cursor: pointer;
+}
+
+button.appButton {
+    background: #555;
+    border: #555;
+    color: #FFF;
+    padding: 0.5rem;
+    font-size: 0.8em;
+    margin: 0 0 0.5rem;
+    cursor: pointer;
+}
+
+button.appButton:hover {
+    background: #666;
+}

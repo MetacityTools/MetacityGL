@@ -8,6 +8,7 @@ attribute vec3 lineEnd;
 
 uniform float thickness;
 uniform float space;
+uniform float grayscale;
 
 varying vec3 fscolor;
 
@@ -64,9 +65,13 @@ void main(){
 
 const fs3D = `
 varying vec3 fscolor;
+uniform float grayscale;
 
 void main() {
-	gl_FragColor = vec4(fscolor, 1.0);
+	float grs = fscolor.r * 0.2126 + fscolor.g * 0.7152 + fscolor.b * 0.0722;
+	vec3 gcolor = vec3(grs, grs, grs);
+	vec3 color = mix(fscolor, gcolor, grayscale);
+	gl_FragColor = vec4(color, 1.0);
 }`;
 
 
@@ -75,7 +80,8 @@ export class DoubleLineMaterial extends THREE.ShaderMaterial {
         super({
             uniforms: {
                 thickness: { value: 10 },
-				space: { value: 2 }
+				space: { value: 2 },
+				grayscale: { value: 1 }
             },
             vertexShader: vs3D,
             fragmentShader: fs3D,

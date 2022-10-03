@@ -1,7 +1,7 @@
 import * as THREE from 'three';
+import { AgentData, MovementData } from '../../utils/types';
 import { GraphicsContext } from '../context';
 import { AgentMaterial } from '../materials/agentMaterial';
-import { AgentData, MovementData } from '../types';
 import { Model } from './model';
 
 
@@ -29,12 +29,14 @@ class Movement extends THREE.InstancedMesh implements Model {
         geometry.setAttribute('positionEnd', data.attrEnd);
         geometry.setAttribute('visible', data.attrVisible);
 
-        const mesh = new Movement(geometry, Movement.defaultMaterial, data.attrStart.count);
+        const mesh = new Movement(geometry, Movement.defaultMaterial, 0);
+        mesh.count = data.attrStart.count;
         mesh.frustumCulled = false;
         mesh.matrixAutoUpdate = false;
         mesh.timeStart = uniforms.timeStart;
         mesh.timeEnd = uniforms.timeEnd;
         mesh.shift = uniforms.shift;
+        mesh.instanceMatrix = new THREE.InstancedBufferAttribute(new Float32Array(0), 0);
 
         mesh.onBeforeRender = (renderer, scene, camera, geometry, material, group) => {
             (material as THREE.ShaderMaterial).uniforms.shift.value = uniforms.shift;
@@ -56,11 +58,12 @@ class Movement extends THREE.InstancedMesh implements Model {
     }
 
     updateVisibility(time: number) {
-        if (this.timeStart === undefined || this.timeEnd === undefined)
-            return;
-        this.visible = time > this.timeStart && time < this.timeEnd;
+        this.visible = this.timeStart! <= time && time < this.timeEnd!;
+        return this.visible;
     }
 }
+
+
 
 
 type uniforms = {
@@ -69,12 +72,15 @@ type uniforms = {
 
 export class AgentModel extends THREE.Group implements Model {
     timeframe: [number, number] | undefined;
+    lastVisible: Movement | undefined;
 
-    static create(data: AgentData, uniforms: uniforms) {   
+    movementArrayTimeSorted: Movement[] = [];
+
+    static create(data: AgentData, uniforms: uniforms) {
         const instance = new THREE.BoxGeometry(uniforms.size, uniforms.size, uniforms.size).toNonIndexed();
         instance.translate(0, 0, uniforms.size * 0.5);
         const attrPos = [], attrVis = [];
-        for(let i = 0; i < data.positions.length; i++){
+        for (let i = 0; i < data.positions.length; i++) {
             attrPos.push(new THREE.InstancedBufferAttribute(data.positions[i], 3, false, 1));
             attrVis.push(new THREE.InstancedBufferAttribute(data.visible[i], 1, false, 1));
         }
@@ -96,7 +102,9 @@ export class AgentModel extends THREE.Group implements Model {
                 timeEnd: data.timestamps[i + 1],
                 shift: 10,
             });
+            movement.visible = false;
             group.add(movement);
+            group.movementArrayTimeSorted.push(movement);
         }
 
         return group;
@@ -109,13 +117,48 @@ export class AgentModel extends THREE.Group implements Model {
     }
 
     onAdd(context: GraphicsContext) {
-        context.onBeforeFrame = (time) => {
-            //this could be improved by A LOT by keeping track of the last visible interval
-            this.children.forEach(child => {
-                (child as Movement).updateVisibility(time);
-            });
+        context.onBeforeFrame = async (time) => {
+            const active = this.binarySearchMovement(time);
+            if (active) {
+                if (active !== this.lastVisible) {
+                    if (this.lastVisible) {
+                        this.lastVisible.visible = false;
+                    }
+                    active.visible = true;
+                    this.lastVisible = active;
+                }
+            } else {
+                this.children.forEach(child => {
+                    (child as Movement).updateVisibility(time);
+                });
+            }
         }
-        if(this.timeframe !== undefined) 
+
+        if (this.timeframe !== undefined)
             context.timeframe = this.timeframe;
+    }
+
+    set grayscale(value: number) {
+        this.children.forEach(child => {
+            ((child as Movement).material as THREE.ShaderMaterial).uniforms.grayscale.value = value;
+            ((child as Movement).material as THREE.ShaderMaterial).uniformsNeedUpdate = true;
+        });
+    }
+
+    binarySearchMovement(time: number): Movement | undefined {
+        let l = 0;
+        let r = this.movementArrayTimeSorted.length - 1;
+        while (l <= r) {
+            const m = Math.floor((l + r) / 2);
+            const movement = this.movementArrayTimeSorted[m];
+            if (movement.timeStart! <= time && time < movement.timeEnd!) {
+                return movement;
+            } else if (movement.timeEnd! <= time) {
+                l = m + 1;
+            } else {
+                r = m - 1;
+            }
+        }
+        return undefined;
     }
 }

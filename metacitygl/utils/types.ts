@@ -38,6 +38,10 @@ export interface GridData {
     color: number
 }
 
+export type Metadata = {
+    [key: number]: any
+}
+
 export class vec3 {
     constructor(public x: number = 0, public y: number = 0, public z: number = 0) {}
     set(x: number, y: number, z: number) {

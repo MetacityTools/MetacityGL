@@ -10,3 +10,4 @@ export abstract class Model extends THREE.Object3D {
     abstract toPickable(): void;
     abstract onAdd(context: GraphicsContext): void;
 } 
+
