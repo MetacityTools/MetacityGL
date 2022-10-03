@@ -2,6 +2,11 @@
   "name": "metacitygl",
   "version": "0.0.1",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MetacityTools/MetacityGL"
+  },
+  "keywords": ["metacity", "visualization", "urban data", "threejs", "react"],
   "files": [
     "dist/**/*"
   ],
