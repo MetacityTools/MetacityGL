@@ -35,7 +35,8 @@ export interface GridData {
     z: number,
     major: number,
     divideMajor: number,
-    color: number
+    color: number,
+    thickness?: number
 }
 
 export type Metadata = {

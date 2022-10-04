@@ -108,14 +108,16 @@ export function MetacityGL(props: MetacityGLProps) {
                 </div>
             { enableTimeline && <Timeline context={context}/> }
             </div>
-            { enableUI && <div className="MetacityGLSidebar">
+             <div className="MetacityGLSidebar" style={{
+                display: enableUI ? "block" : "none",
+             }}>
                 {children.map((child, index) => {
                     if (React.isValidElement<MetacityLayerProps>(child)) {
                         return React.cloneElement(child, { context: context });
                     }
                 })}
                 <MetacityLabel context={context}/>
-            </div> }
+            </div>
         </div>
     );
 }
