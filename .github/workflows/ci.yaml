@@ -46,7 +46,7 @@ jobs:
         npm run build
     - name: Create Release ZIP file
       run: |
-        zip metacitygl.zip dist/*
+        zip -r metacitygl.zip dist
     - uses: rickstaa/action-create-tag@v1
       with:
         tag: ${{ env.CURRENT_VERSION }}
