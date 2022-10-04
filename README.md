@@ -1,6 +1,6 @@
 # 🗺 MetacityGL 
 
-[![Build Status](https://github.com/MetacityTools/MetacityGL/workflows/MetacityGL%20CI/badge.svg)](https://github.com/MetacityTools/Metacity/actions?query=workflow%3A%22MetacityGL+CI%22)
+[![Build Status](https://github.com/MetacityTools/MetacityGL/workflows/MetacityGL%20CI/badge.svg)](https://github.com/MetacityTools/MetacityGL/actions?query=workflow%3A%22MetacityGL+CI%22)
 [![npm version](https://badge.fury.io/js/metacitygl.svg)](https://badge.fury.io/js/metacitygl)
 
 
