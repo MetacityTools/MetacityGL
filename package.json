@@ -1,6 +1,6 @@
 {
   "name": "metacitygl",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "type": "module",
   "repository": {
     "type": "git",
@@ -12,7 +12,7 @@
   ],
   "main": "./dist/metacitygl.umd.js",
   "module": "./dist/metacitygl.js",
-  "types": "./dist/metacitygl/main.d.ts",
+  "types": "./dist/metacitygl/metacitygl.d.ts",
   "exports": {
     ".": {
       "import": "./dist/metacitygl.js",
