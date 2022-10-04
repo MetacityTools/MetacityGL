@@ -1,3 +1,4 @@
+import React from 'react';
 import { Graphics } from "../metacitygl";
 
 interface MetacityLabelProps {
