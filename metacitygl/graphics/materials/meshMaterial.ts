@@ -19,12 +19,12 @@ uniform float grayscale;
 
 
 //light always shines from the top
-vec3 light = vec3(0.0, 0.0, 1.0);
+vec3 light = vec3(0.0, 0.0, -1.0);
 
 void main() {
     //pseudo-phong shading
-    float diffuse = max(dot(fsnormal, light), 0.0);
-    vec3 phcolor = fscolor * diffuse * 0.5 + fscolor * 0.5;
+    float diffuse = abs(dot(fsnormal, light));
+    vec3 phcolor = fscolor * diffuse * 0.3 + fscolor * 0.7;
     
     float grs = phcolor.r * 0.2126 + phcolor.g * 0.7152 + phcolor.b * 0.0722;
 	vec3 gcolor = vec3(grs, grs, grs);

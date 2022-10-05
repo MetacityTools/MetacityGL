@@ -1,13 +1,21 @@
 import React from 'react'
 import './App.css'
 import { Grid, MetacityGL } from '../metacitygl/metacitygl';
-import { ExampleLayer } from './layer';
+import { MetacityLayer } from './layers/layer';
 
 function App() {
 
     return (
-        <MetacityGL background={0x222222}>
-            <ExampleLayer
+        <MetacityGL background={0x222222}
+                    target={[-742977, -1051266, 0]}>
+            <MetacityLayer 
+                api="https://data.metacity.cc/buildings"
+            />
+            <MetacityLayer 
+                api="https://data.metacity.cc/terrain"
+            />
+            <MetacityLayer 
+                api="https://data.metacity.cc/bridges"
             />
             <Grid
                 from={[-100, -100]}

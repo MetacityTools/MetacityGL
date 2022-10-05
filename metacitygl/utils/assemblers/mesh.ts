@@ -14,14 +14,17 @@ export class MeshAssembler {
 
     constructor(private id = 1) {}
 
-    addMesh(vertices: number[], rgb: number[], metadata: any) {
-        this.positions.push(...vertices);
+    addMesh(vertices: Float32Array|number[], rgb: number[], metadata: any) {
+        for(let i = 0; i < vertices.length; i++)
+            this.positions.push(vertices[i]);
+            
         const vertexCount = vertices.length / 3;
         const idcolor = colorHex(this.id);
         for (let i = 0; i < vertexCount; i++) {
             this.colors.push(rgb[0], rgb[1], rgb[2]);
             this.ids.push(idcolor[0], idcolor[1], idcolor[2]);
         }
+
         metadata["bbox"] = computeBBox(vertices);
         this.metadata[this.id] = metadata;
         this.id++;

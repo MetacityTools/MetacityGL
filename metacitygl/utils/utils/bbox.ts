@@ -1,9 +1,9 @@
 
 
-export function computeBBox(vertices: number[]) {
+export function computeBBox(vertices: Float32Array|number[]) {
     const bbox = [
         [ Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE ],
-        [ Number.MIN_VALUE, Number.MIN_VALUE, Number.MIN_VALUE ]
+        [ -Number.MAX_VALUE, -Number.MAX_VALUE, -Number.MAX_VALUE ]
     ];
 
     let x, y, z;

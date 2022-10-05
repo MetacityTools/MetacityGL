@@ -9,6 +9,7 @@ import { MetacityLayerProps } from "./layer";
 interface MetacityGLProps {
     background?: number;
     children?: React.ReactNode | React.ReactNode[];
+    target?: [number, number, number];
 }
 
 export function MetacityGL(props: MetacityGLProps) {
@@ -32,6 +33,7 @@ export function MetacityGL(props: MetacityGLProps) {
                 canvas: canvas,
                 container: container,
                 background: props.background ?? 0x000000,
+                target: props.target ?? [0, 0, 0],
             });
             setContext(context);
             context.updateSize();
@@ -100,6 +102,7 @@ export function MetacityGL(props: MetacityGLProps) {
                                 position: "absolute",
                                 left: hoverLocation?.x,
                                 top: hoverLocation?.y,
+                                pointerEvents: "none",
                             }}
                         >
                             <pre>{JSON.stringify(metadataHover, null, 2) }</pre>
