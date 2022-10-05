@@ -37,7 +37,7 @@ export class MeshMaterial extends THREE.ShaderMaterial {
     constructor() {
         super({
             uniforms: {
-                grayscale: { value: 1 },
+                grayscale: { value: 0 },
             },
             vertexShader: vs3D,
             fragmentShader: fs3D,

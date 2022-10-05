@@ -14,23 +14,24 @@ self.onmessage = (message: MessageEvent) => {
 };
 
 async function loadModel(message: any) {
-    const { url, idOffset } = message.data as MetacityWorkerInput;
+    const { url, idOffset, color, styles } = message.data as MetacityWorkerInput;
+
     console.log("Loading model", url);
+    console.log("style", styles);
+    const colorArr = Utils.Color.colorHexToArr(color);
     const gltf = await load(url, GLTFLoader);
     const groups = groupBuffersByType(gltf);
-
     const meshASM = new Utils.Assemblers.MeshAssembler(idOffset);
     for(let i = 0; i < groups.meshes.length; i++) {
         const mesh = groups.meshes[i];
-        meshASM.addMesh(mesh.positions, [1, 1, 1], mesh.meta);
+        meshASM.addMesh(mesh.positions, colorArr, mesh.meta);
     }
 
-    //let meshColors: Float32Array | undefined;
-    //if (styles.length > 0 && models.mesh && models.mesh.ids) {
-    //    meshColors = applyStyle(styles, baseColor, models.mesh.ids, metadata);
-    //}
-
     const meshBuffers = meshASM.toBuffers();
+    if (styles.length > 0) {
+        applyStyle(styles, color, meshBuffers.ids, meshBuffers.colors, meshBuffers.metadata);
+    }
+
     const transferables = meshASM.pickTransferables(meshBuffers);
 
     self.postMessage({

@@ -1,21 +1,35 @@
 import React from 'react'
 import './App.css'
-import { Grid, MetacityGL } from '../metacitygl/metacitygl';
+import { Grid, MetacityGL, Utils } from '../metacitygl/metacitygl';
 import { MetacityLayer } from './layers/layer';
 
 function App() {
 
     return (
-        <MetacityGL background={0x222222}
-                    target={[-742977, -1051266, 0]}>
-            <MetacityLayer 
-                api="https://data.metacity.cc/buildings"
-            />
+        <MetacityGL 
+                background={0x151d29}
+                target={[-742977, -1051266, 0]}>
             <MetacityLayer 
                 api="https://data.metacity.cc/terrain"
+                color={0x122133}
             />
             <MetacityLayer 
+                api="https://data.metacity.cc/buildings"
+                pickable
+                styles={[
+                    new Utils.Styles.Style().add(
+                        new Utils.Styles.StyleAttributeRangeExt({
+                            attribute: 'height',
+                            min: 20,
+                            max: 50
+                        })
+                    ).useColor([0x0088FF, 0xFF0088])
+                ]}
+            />
+
+            <MetacityLayer 
                 api="https://data.metacity.cc/bridges"
+                color={0x223143}
             />
             <Grid
                 from={[-100, -100]}
@@ -31,3 +45,13 @@ function App() {
 }
 
 export default App
+
+/*
+<MetacityLayer 
+api="https://data.metacity.cc/buildings"
+/>
+
+<MetacityLayer 
+api="https://data.metacity.cc/bridges"
+color={0x223143}
+/>*/

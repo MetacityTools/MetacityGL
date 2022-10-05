@@ -15,6 +15,8 @@ export class MetacityLoader {
         this.workerPool.process({
             url: data.url,
             idOffset: this.idOffset,
+            color: data.color,
+            styles: data.styles,
         }, callback);
 
         this.idOffset += data.tileSize;

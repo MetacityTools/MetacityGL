@@ -1,11 +1,13 @@
-import { MetacityLayerProps, Loaders, Graphics } from "../../metacitygl/metacitygl";
+import * as MetacityGL from "../../metacitygl/metacitygl";
 import axios from "axios";
 import React from "react";
 
 
-interface LayerProps extends MetacityLayerProps {
+interface LayerProps extends MetacityGL.MetacityLayerProps {
     api: string;
     pickable?: boolean;
+    color?: number;
+    styles?: MetacityGL.Utils.Styles.Style[]
 }
 
 interface MetacityTile {
@@ -25,8 +27,16 @@ interface MetacityLayout {
 export function MetacityLayer(props: LayerProps) {
     const { api, context } = props;
     const [layout, setLayout] = React.useState<MetacityLayout>();
-    const [loader, setLoader] = React.useState<Loaders.MetacityLoader>(new Loaders.MetacityLoader());
+    const [loader] = React.useState<MetacityGL.Loaders.MetacityLoader>(new MetacityGL.Loaders.MetacityLoader());
     const pickable = props.pickable ?? false;
+    const color = props.color ?? 0xffffff;
+    let styles: string[] = [];
+
+    if (props.styles) {
+        for(let style of props.styles) {
+            styles.push(style.serialize());
+        }
+    }
 
     React.useEffect(() => {
         const url = api + "/layout.json";
@@ -45,9 +55,10 @@ export function MetacityLayer(props: LayerProps) {
                 loader.load({
                     url: api + "/" + tile.file,
                     tileSize: tile.size,
+                    color: color,
+                    styles: styles,
                 }, (data: any) => {
-                    const model = Graphics.Models.MeshModel.create(data.mesh);
-
+                    const model = MetacityGL.Graphics.Models.MeshModel.create(data.mesh);
                     if (pickable)
                         context.add(model, data.mesh.metadata);
                     else

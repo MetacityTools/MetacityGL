@@ -1,4 +1,4 @@
-import { colorHex } from "../utils/color";
+import { colorHexToArr } from "../utils/color";
 
 
 export class PointsAssembler {
@@ -11,7 +11,7 @@ export class PointsAssembler {
 
     addPoint(x: number, y: number, z: number) {
         this.positions.push(x, y, z);
-        const idcolor = colorHex(this.id);
+        const idcolor = colorHexToArr(this.id);
         this.ids.push(idcolor[0], idcolor[1], idcolor[2]);
     }
 

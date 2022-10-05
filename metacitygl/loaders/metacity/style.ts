@@ -1,23 +1,18 @@
+import * as Utils from "../../utils"
 
-import { MetadataTable } from '../../layer/metadata';
-import { colorHex } from '../../style/color';
-import { Style } from '../../style/style';
-
-
-function computeColorTable(styles: Style[], baseColor: number, metadataTable: MetadataTable) {
+function computeColorTable(styles: Utils.Styles.Style[], baseColor: number, metadataTable: Utils.Types.Metadata) {
     const colorTable = new Map<number, number[]>();
     for (const obj in metadataTable) {
         let color = baseColor;
         for (let i = 0; i < styles.length; i++)
             color = styles[i].apply(metadataTable[obj]) ?? color;
-        colorTable.set(parseInt(obj), colorHex(color));
+        colorTable.set(parseInt(obj), Utils.Color.colorHexToArr(color));
     }
     return colorTable;
 }
 
 
-function computeColorBuffer(ids: Float32Array, colorTable: Map<number, number[]>) {
-    const colorBuffer = new Float32Array(ids.length);
+function computeColorBuffer(ids: Float32Array, colorBuffer: Float32Array, colorTable: Map<number, number[]>) {
     const idBuffer = new Uint8Array(4);
     const view = new DataView(idBuffer.buffer);
     idBuffer[0] = 0;
@@ -43,11 +38,12 @@ function computeColorBuffer(ids: Float32Array, colorTable: Map<number, number[]>
 }
 
 
-export function applyStyle(styles: string[], baseColor: number, ids: Float32Array, metadata: MetadataTable) {
+export function applyStyle(styles: string[], baseColor: number, ids: Float32Array, colorBuffer: Float32Array, metadata: Utils.Types.Metadata) {
     const stylesCls = [];
     for (let i = 0; i < styles.length; i++)
-        stylesCls.push(Style.deserialize(styles[i]));
+        stylesCls.push(Utils.Styles.Style.deserialize(styles[i]));
+
+    console.log(stylesCls);
     const colorTable = computeColorTable(stylesCls, baseColor, metadata);
-    const colorBuffer = computeColorBuffer(ids, colorTable);
-    return colorBuffer;
+    computeColorBuffer(ids, colorBuffer, colorTable);
 }

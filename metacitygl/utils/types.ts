@@ -40,7 +40,11 @@ export interface GridData {
 }
 
 export type Metadata = {
-    [key: number]: any
+    [key: number]: MetadataRecord
+}
+
+export type MetadataRecord = {
+    [key: string]: any
 }
 
 export class vec3 {

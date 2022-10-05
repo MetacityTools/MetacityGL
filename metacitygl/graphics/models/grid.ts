@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { Model } from "./model";
 import { GraphicsContext } from "../context";
 import { gridXY } from "./geometry/grid";
-import { colorHex } from "../../utils/utils/color";
+import { colorHexToArr } from "../../utils/utils/color";
 import { GridData } from "../../utils/types";
 import { MeshUniformMaterial } from "../materials/meshUniformMaterial";
 
@@ -12,7 +12,7 @@ import { MeshUniformMaterial } from "../materials/meshUniformMaterial";
 export class GridModel extends THREE.Mesh implements Model{
     static create(data: GridData, uniforms: { thickness: number }) {
         const buffer = gridXY(data.from, data.to, data.z, data.major, data.divideMajor, uniforms.thickness);
-        const color = colorHex(data.color);
+        const color = colorHexToArr(data.color);
         
         const geometry = new THREE.BufferGeometry();
         geometry.setAttribute('position', new THREE.BufferAttribute(buffer, 3));

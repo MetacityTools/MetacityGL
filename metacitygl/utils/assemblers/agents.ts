@@ -1,4 +1,4 @@
-import { colorHex } from "../utils/color";
+import { colorHexToArr } from "../utils/color";
 
 enum AgentAssemblerState {
     Idle,
@@ -42,7 +42,7 @@ export class AgentAssembler {
         this.agent = [];
         this.colors.push(rgb[0], rgb[1], rgb[2]);
         this.dimensions.push(...dimensions);
-        const idcolor = colorHex(this.id);
+        const idcolor = colorHexToArr(this.id);
         //this.ids.push(idcolor[0], idcolor[1], idcolor[2]);
         this.metadata[this.id] = metadata;
 
