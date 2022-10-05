@@ -12,6 +12,7 @@ function App() {
             <MetacityLayer 
                 api="https://data.metacity.cc/terrain"
                 color={0x122133}
+                //color={0x13356e}
             />
             <MetacityLayer 
                 api="https://data.metacity.cc/buildings"
@@ -23,7 +24,8 @@ function App() {
                             min: 20,
                             max: 50
                         })
-                    ).useColor([0x0088FF, 0xFF0088])
+                    //).useColor([0x0088FF, 0xFF0088])
+                    ).useColor([0x04d3ff, 0xFF00ea])
                 ]}
             />
 

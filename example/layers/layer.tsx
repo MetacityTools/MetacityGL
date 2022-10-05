@@ -40,8 +40,6 @@ export function MetacityLayer(props: LayerProps) {
 
     React.useEffect(() => {
         const url = api + "/layout.json";
-        console.log("Fetching layout from " + url);
-
         axios.get(url).then((response) => {
             const layout = response.data;
             setLayout(layout);

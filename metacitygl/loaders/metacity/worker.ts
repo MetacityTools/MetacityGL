@@ -15,9 +15,7 @@ self.onmessage = (message: MessageEvent) => {
 
 async function loadModel(message: any) {
     const { url, idOffset, color, styles } = message.data as MetacityWorkerInput;
-
-    console.log("Loading model", url);
-    console.log("style", styles);
+    
     const colorArr = Utils.Color.colorHexToArr(color);
     const gltf = await load(url, GLTFLoader);
     const groups = groupBuffersByType(gltf);

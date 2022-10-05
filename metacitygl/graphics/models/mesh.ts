@@ -24,6 +24,7 @@ export class MeshModel extends THREE.Mesh implements Model {
         
         const mesh = new MeshModel(geometry, this.defaultMaterial);
         mesh.matrixAutoUpdate = false;
+        //just to test (mesh.material as THREE.ShaderMaterial).wireframe = true;
         return mesh;
     }
 

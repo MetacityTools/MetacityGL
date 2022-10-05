@@ -2,38 +2,31 @@ import * as THREE from 'three';
 
 const vs3D = `
 varying vec3 fscolor;
-varying vec3 fsnormal;
+
+uniform float size;
+uniform float scale;
 
 void main(){
 	fscolor = color;
     fsnormal = normal;
 	vec3 transformed = position;
-
+    gl_PointSize = size * ( scale / - mvPosition.z );
 	gl_Position = projectionMatrix * (modelViewMatrix * vec4(transformed, 1.0));
 }`;
 
 const fs3D = `
 varying vec3 fscolor;
-varying vec3 fsnormal;
 uniform float grayscale;
 
-
-//light always shines from the top
-vec3 light = vec3(0.0, 0.0, -1.0);
-
 void main() {
-    //pseudo-phong shading
-    float diffuse = abs(dot(fsnormal, light));
-    vec3 phcolor = fscolor * diffuse * 0.2 + fscolor * 0.8;
-    
-    float grs = phcolor.r * 0.2126 + phcolor.g * 0.7152 + phcolor.b * 0.0722;
+    float grs = fscolor.r * 0.2126 + fscolor.g * 0.7152 + fscolor.b * 0.0722;
 	vec3 gcolor = vec3(grs, grs, grs);
-	vec3 color = mix(phcolor, gcolor, grayscale);
+	vec3 color = mix(fscolor, gcolor, grayscale);
 	gl_FragColor = vec4(color, 1.0);
 }`;
 
 
-export class MeshMaterial extends THREE.ShaderMaterial {
+export class PointsMaterial extends THREE.ShaderMaterial {
     constructor() {
         super({
             uniforms: {
