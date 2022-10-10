@@ -1,6 +1,6 @@
-import { MetacityLoader } from "./extensions/metacity/loader";
+import { MetacityLayer } from "./extensions/metacity/layer";
 
 
 export {
-    MetacityLoader
+    MetacityLayer
 }

@@ -1,5 +1,5 @@
-import * as MetacityGL from "../../metacitygl/metacitygl";
-import * as Extensions from "../../metacitygl/extensions";
+import * as MetacityGL from "../../metacitygl";
+import { MetacityLoader } from "./loader/loader";
 import axios from "axios";
 import React from "react";
 
@@ -31,7 +31,7 @@ interface MetacityLayout {
 export function MetacityLayer(props: LayerProps) {
     const { api, context } = props;
     const [layout, setLayout] = React.useState<MetacityLayout>();
-    const [loader] = React.useState<Extensions.MetacityLoader>(new Extensions.MetacityLoader());
+    const [loader] = React.useState<MetacityLoader>(new MetacityLoader());
     const pickable = props.pickable ?? false;
     const color = props.color ?? 0xffffff;
     const radius = props.radius ?? 2500;

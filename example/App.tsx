@@ -1,7 +1,7 @@
 import React from 'react'
 import './App.css'
-import { Grid, MetacityGL, Utils } from '../metacitygl/metacitygl';
-import { MetacityLayer } from './layers/layer';
+import { MetacityGL, Utils } from '../metacitygl/metacitygl';
+import { MetacityLayer } from '../metacitygl/extensions';
 
 function App() {
 
