@@ -14,18 +14,12 @@ export interface RenderableModel extends Model {
 }
 
 function updateUniforms(model: RenderableModel, values: any) {
-    if (!model._uniforms)
-        model._uniforms = {};
-
     for(let key in values) {
         model._uniforms[key] = values[key];
     }
 }
 
-function onBeforeRender(model: RenderableModel, renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera, geometry: THREE.BufferGeometry, material: THREE.Material, group: THREE.Group) {
-    if (!model._uniforms)
-        model._uniforms = {};
-        
+function onBeforeRender(model: RenderableModel, renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera, geometry: THREE.BufferGeometry, material: THREE.Material, group: THREE.Group) {    
     if (Object.keys(model._uniforms).length > 0) {
         for(let key in model._uniforms) {
             (material as THREE.ShaderMaterial).uniforms[key].value = model._uniforms[key];
@@ -33,9 +27,9 @@ function onBeforeRender(model: RenderableModel, renderer: THREE.WebGLRenderer, s
 
         if (model.timeSensitive)
             (material as THREE.ShaderMaterial).uniforms.time.value = scene.userData.time;
-
         (material as THREE.ShaderMaterial).uniformsNeedUpdate = true;
     }
+    
 }
 
 

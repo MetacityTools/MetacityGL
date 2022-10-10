@@ -34,6 +34,8 @@ export class MeshAssembler {
     }
 
     pickTransferables(buffers: any) {
+        if (buffers === undefined)
+            return [];
         return [buffers.positions.buffer, buffers.normals.buffer, buffers.colors.buffer, buffers.ids.buffer];
     }
 
@@ -42,6 +44,9 @@ export class MeshAssembler {
     }
 
     toBuffers() {
+        if (this.positions.length === 0)
+            return undefined;
+            
         return {
             positions: new Float32Array(this.positions),
             normals: computeNormals(this.positions),

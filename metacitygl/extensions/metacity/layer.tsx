@@ -11,6 +11,7 @@ interface LayerProps extends MetacityGL.MetacityLayerProps {
     color?: number;
     styles?: MetacityGL.Utils.Styles.Style[];
     radius?: number;
+    children?: React.ReactNode;
 }
 
 interface MetacityTile {
@@ -29,7 +30,7 @@ interface MetacityLayout {
 
 
 export function MetacityLayer(props: LayerProps) {
-    const { api, context } = props;
+    const { api, context, children } = props;
     const [layout, setLayout] = React.useState<MetacityLayout>();
     const [loader] = React.useState<MetacityLoader>(new MetacityLoader());
     const pickable = props.pickable ?? false;
@@ -56,34 +57,6 @@ export function MetacityLayer(props: LayerProps) {
         return Math.sqrt(Math.pow(xa - xb, 2) + Math.pow(ya - yb, 2));
     }
 
-    const loadTiles = (target: vec3, _: vec3) => {
-        if (layout && context) {
-            const dx = layout.tileWidth * 0.5;
-            const dy = layout.tileHeight * 0.5;
-            layout.tiles.forEach((tile) => {
-                const d = dist(tile.x * layout.tileWidth + dx, tile.y * layout.tileHeight + dy, target.x, target.y);
-                if (d < radius && !tile.loaded) {
-                    tile.loaded = true;
-                    loader.load({
-                        url: api + "/" + tile.file,
-                        tileSize: tile.size,
-                        color: color,
-                        styles: styles,
-                    }, (data: any) => {
-                        const mesh = MetacityGL.Graphics.Models.MeshModel.create(data.mesh);
-                        const points = MetacityGL.Graphics.Models.PointModel.create(data.points);
-                        if (pickable)
-                            context.add(mesh, data.mesh.metadata);
-                        else
-                            context.add(mesh);
-
-                        context.add(points);
-                    });
-                }
-            });
-        }
-    }
-
     React.useEffect(() => {
         if (layout && context) {
             context.onNavChange = loadTiles;
@@ -91,5 +64,57 @@ export function MetacityLayer(props: LayerProps) {
         }
     }, [layout, context]);
 
-    return (null);
+    return (
+        <>
+            {children}
+        </>
+    );
+
+    function loadTiles(target: vec3, _: vec3) {
+        if (layout && context) {
+            const dx = layout.tileWidth * 0.5;
+            const dy = layout.tileHeight * 0.5;
+            layout.tiles.forEach((tile) => {
+                const d = dist(tile.x * layout.tileWidth + dx, tile.y * layout.tileHeight + dy, target.x, target.y);
+                if (d < radius && !tile.loaded) {
+                    loadTile(tile);
+                }
+            });
+        }
+    }
+
+    function loadTile(tile: MetacityTile) {
+        tile.loaded = true;
+        loader.load({
+            url: api + "/" + tile.file,
+            tileSize: tile.size,
+            color: color,
+            styles: styles,
+        }, (data: any) => {
+            addMesh(data);
+            addPoints(data);
+        });
+    }
+
+    function addPoints(data: any) {
+        if (data.points) {
+            const points = MetacityGL.Graphics.Models.PointModel.create(data.points);
+            points.uniforms = {
+                modelColor: MetacityGL.Utils.Color.colorHexToArr(color)
+            };
+            context!.add(points);
+        }
+    }
+
+    function addMesh(data: any) {
+        if (data.mesh) {
+            const mesh = MetacityGL.Graphics.Models.MeshModel.create(data.mesh);
+            if (pickable)
+                context!.add(mesh, data.mesh.metadata);
+
+
+            else
+                context!.add(mesh);
+        }
+    }
 }

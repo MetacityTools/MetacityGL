@@ -1,4 +1,4 @@
-import * as Utils from "../../utils"
+import * as Utils from "../../../utils"
 
 function computeColorTable(styles: Utils.Styles.Style[], baseColor: number, metadataTable: Utils.Types.Metadata) {
     const colorTable = new Map<number, number[]>();

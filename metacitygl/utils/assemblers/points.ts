@@ -27,10 +27,15 @@ export class PointsAssembler {
     }
 
     pickTransferables(buffers: any) {
+        if (buffers === undefined)
+            return [];
         return [buffers.positions.buffer, buffers.ids.buffer];
     }
 
     toBuffers() {
+        if (this.positions.length === 0)
+            return undefined;
+
         return {
             positions: new Float32Array(this.positions),
             ids: new Float32Array(this.ids),

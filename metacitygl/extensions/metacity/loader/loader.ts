@@ -1,4 +1,4 @@
-import { WorkerPool } from "../../utils";
+import { WorkerPool } from "../../../utils";
 import { MetacityLoaderInput, MetacityLoaderOutput, MetacityWorkerInput } from "./types";
 import MetacityWorker from "./worker?worker&inline";
 

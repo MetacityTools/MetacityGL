@@ -2,7 +2,7 @@ import { load }  from '@loaders.gl/core';
 import { GLTFLoader } from '@loaders.gl/gltf';
 import { groupBuffersByType } from './group';
 import { applyStyle } from './style';
-import * as Utils from "../../utils"
+import * as Utils from "../../../utils"
 import { MetacityWorkerInput } from './types';
 
 
@@ -34,7 +34,7 @@ async function loadModel(message: any) {
     const pointBuffers = pointsASM.toBuffers();
     const meshBuffers = meshASM.toBuffers();
     
-    if (styles.length > 0) {
+    if (styles.length > 0 && meshBuffers) {
         applyStyle(styles, color, meshBuffers.ids, meshBuffers.colors, meshBuffers.metadata);
     }
 
