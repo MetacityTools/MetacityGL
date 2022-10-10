@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { AgentData, MovementData } from '../../utils/types';
 import { GraphicsContext } from '../context';
 import { AgentMaterial } from '../materials/agentMaterial';
-import { Model } from './model';
+import { BaseGroupModel, BaseInstancedModel } from './model';
 
 
 type movementUniforms = {
@@ -12,7 +12,7 @@ type movementUniforms = {
 }
 
 
-class Movement extends THREE.InstancedMesh implements Model {
+class Movement extends BaseInstancedModel {
     timeStart: number | undefined;
     timeEnd: number | undefined;
     shift: number | undefined;
@@ -37,24 +37,13 @@ class Movement extends THREE.InstancedMesh implements Model {
         mesh.timeEnd = uniforms.timeEnd;
         mesh.shift = uniforms.shift;
         mesh.instanceMatrix = new THREE.InstancedBufferAttribute(new Float32Array(0), 0);
-
-        mesh.onBeforeRender = (renderer, scene, camera, geometry, material, group) => {
-            (material as THREE.ShaderMaterial).uniforms.shift.value = uniforms.shift;
-            (material as THREE.ShaderMaterial).uniforms.timeStart.value = uniforms.timeStart;
-            (material as THREE.ShaderMaterial).uniforms.timeEnd.value = uniforms.timeEnd;
-            (material as THREE.ShaderMaterial).uniforms.time.value = scene.userData.time;
-            (material as THREE.ShaderMaterial).uniformsNeedUpdate = true;
-        }
-
+        mesh.uniforms = uniforms;
+        mesh.timeSensitive = true;
         return mesh;
     }
 
     toPickable(): void {
         this.visible = false;
-    }
-
-    onAdd(context: GraphicsContext) {
-        //pass
     }
 
     updateVisibility(time: number) {
@@ -64,16 +53,13 @@ class Movement extends THREE.InstancedMesh implements Model {
 }
 
 
-
-
 type uniforms = {
     size: number;
 }
 
-export class AgentModel extends THREE.Group implements Model {
+export class AgentModel extends BaseGroupModel {
     timeframe: [number, number] | undefined;
     lastVisible: Movement | undefined;
-
     movementArrayTimeSorted: Movement[] = [];
 
     static create(data: AgentData, uniforms: uniforms) {
@@ -136,13 +122,6 @@ export class AgentModel extends THREE.Group implements Model {
 
         if (this.timeframe !== undefined)
             context.timeframe = this.timeframe;
-    }
-
-    set grayscale(value: number) {
-        this.children.forEach(child => {
-            ((child as Movement).material as THREE.ShaderMaterial).uniforms.grayscale.value = value;
-            ((child as Movement).material as THREE.ShaderMaterial).uniformsNeedUpdate = true;
-        });
     }
 
     binarySearchMovement(time: number): Movement | undefined {

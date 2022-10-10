@@ -8,11 +8,10 @@ function App() {
     return (
         <MetacityGL 
                 background={0x151d29}
-                target={[-742977, -1051266, 0]}>
+                target={[-742575, -1048673, 0]}>
             <MetacityLayer 
                 api="https://data.metacity.cc/terrain"
                 color={0x122133}
-                //color={0x13356e}
             />
             <MetacityLayer 
                 api="https://data.metacity.cc/buildings"
@@ -24,7 +23,6 @@ function App() {
                             min: 20,
                             max: 50
                         })
-                    //).useColor([0x0088FF, 0xFF0088])
                     ).useColor([0x04d3ff, 0xFF00ea])
                 ]}
             />
@@ -33,14 +31,8 @@ function App() {
                 api="https://data.metacity.cc/bridges"
                 color={0x223143}
             />
-            <Grid
-                from={[-100, -100]}
-                to={[100, 100]}
-                major={20}
-                divideMajor={2}
-                z={0}
-                color={0x000000}
-                thickness={1}
+            <MetacityLayer 
+                api="https://data.metacity.cc/trees"
             />
         </MetacityGL>
     )
@@ -49,11 +41,25 @@ function App() {
 export default App
 
 /*
-<MetacityLayer 
-api="https://data.metacity.cc/buildings"
-/>
+            <MetacityLayer 
+                api="https://data.metacity.cc/buildings"
+                pickable
+                styles={[
+                    new Utils.Styles.Style().add(
+                        new Utils.Styles.StyleAttributeRangeExt({
+                            attribute: 'height',
+                            min: 20,
+                            max: 50
+                        })
+                    ).useColor([0x04d3ff, 0xFF00ea])
+                ]}
+            />
 
-<MetacityLayer 
-api="https://data.metacity.cc/bridges"
-color={0x223143}
-/>*/
+            <MetacityLayer 
+                api="https://data.metacity.cc/bridges"
+                color={0x223143}
+            />
+            <MetacityLayer 
+                api="https://data.metacity.cc/trees"
+            />
+            */

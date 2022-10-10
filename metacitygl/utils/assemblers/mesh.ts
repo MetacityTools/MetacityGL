@@ -37,6 +37,10 @@ export class MeshAssembler {
         return [buffers.positions.buffer, buffers.normals.buffer, buffers.colors.buffer, buffers.ids.buffer];
     }
 
+    get idCounter() {
+        return this.id;
+    }
+
     toBuffers() {
         return {
             positions: new Float32Array(this.positions),

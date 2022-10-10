@@ -4,7 +4,7 @@ import { GraphicsContext } from "../context";
 import { LineMaterial } from "../materials/lineMaterial";
 import { LinePickMaterial } from "../materials/linePickMaterial";
 import { segment } from "./geometry/segment";
-import { Model } from "./model";
+import { BaseInstancedModel } from "./model";
 
 
 const SEGMENT_INSTANCE = new Float32Array(segment());
@@ -13,8 +13,7 @@ type uniforms = {
     thickness: number;
 }
 
-
-export class LineModel extends THREE.InstancedMesh implements Model {
+export class LineModel extends BaseInstancedModel {
 
     static readonly defaultMaterial = new LineMaterial();
     static readonly pickableMaterial = new LinePickMaterial();
@@ -38,24 +37,12 @@ export class LineModel extends THREE.InstancedMesh implements Model {
         mesh.matrixAutoUpdate = false;
         mesh.frustumCulled = false; 
         mesh.instanceMatrix = new THREE.InstancedBufferAttribute(new Float32Array(0), 0);
-
-        mesh.onBeforeRender = (renderer, scene, camera, geometry, material, group) => {
-            (material as THREE.ShaderMaterial).uniforms.thickness.value = uniforms.thickness ?? 10;
-            (material as THREE.ShaderMaterial).uniformsNeedUpdate = true;
-        }
+        mesh.uniforms = uniforms;
         return mesh;
-    }
-
-    onAdd(context: GraphicsContext) {
-        //pass
     }
 
     toPickable() {
         this.material = LineModel.pickableMaterial;
     }
-
-    set grayscale(value: number) {
-        (this.material as THREE.ShaderMaterial).uniforms.grayscale.value = value;
-        (this.material as THREE.ShaderMaterial).uniformsNeedUpdate = true;
-    }
 }
+
