@@ -1,4 +1,4 @@
-import * as Utils from "../../utils"
+import * as Utils from "../../../utils"
 
 function computeColorTable(styles: Utils.Styles.Style[], baseColor: number, metadataTable: Utils.Types.Metadata) {
     const colorTable = new Map<number, number[]>();
@@ -43,7 +43,6 @@ export function applyStyle(styles: string[], baseColor: number, ids: Float32Arra
     for (let i = 0; i < styles.length; i++)
         stylesCls.push(Utils.Styles.Style.deserialize(styles[i]));
 
-    console.log(stylesCls);
     const colorTable = computeColorTable(stylesCls, baseColor, metadata);
     computeColorBuffer(ids, colorBuffer, colorTable);
 }

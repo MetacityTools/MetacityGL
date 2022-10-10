@@ -72,6 +72,9 @@ export class AgentAssembler {
     }
 
     toBuffers() {
+        if (this.empty)
+            return undefined;
+
         const sortedTimestamps = Array.from(this.times).sort((a, b) => a - b);
         let positions: number[][] = [];
         let visible: number[][] = [];
@@ -142,6 +145,9 @@ export class AgentAssembler {
     }
 
     pickTransferables(buffers: any) {
+        if (buffers == undefined)
+            return [];
+            
         const transferables: Float32Array[] = [];
         for (let i = 0; i < buffers.positions.length; i++)
             transferables.push(buffers.positions[i].buffer);

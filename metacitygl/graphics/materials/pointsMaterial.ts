@@ -3,15 +3,16 @@ import * as THREE from 'three';
 const vs3D = `
 varying vec3 fscolor;
 
+uniform vec3 modelColor;
 uniform float size;
 uniform float scale;
 
 void main(){
-	fscolor = color;
-    fsnormal = normal;
+	fscolor = modelColor;
 	vec3 transformed = position;
-    gl_PointSize = size * ( scale / - mvPosition.z );
-	gl_Position = projectionMatrix * (modelViewMatrix * vec4(transformed, 1.0));
+	vec4 mvPosition = (modelViewMatrix * vec4(transformed, 1.0));
+    gl_PointSize = size * scale / -mvPosition.z;
+	gl_Position = projectionMatrix * mvPosition;
 }`;
 
 const fs3D = `
@@ -30,12 +31,15 @@ export class PointsMaterial extends THREE.ShaderMaterial {
     constructor() {
         super({
             uniforms: {
+                size: { value: 10 },
+                scale: { value: 1000 },
                 grayscale: { value: 0 },
+                modelColor: { value: [1, 1, 1] },
             },
             vertexShader: vs3D,
             fragmentShader: fs3D,
             side: THREE.DoubleSide,
-            vertexColors: true,
+            //vertexColors: false,
         });
     }
 }

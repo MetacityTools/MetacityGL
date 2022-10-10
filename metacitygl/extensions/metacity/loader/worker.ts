@@ -2,7 +2,7 @@ import { load }  from '@loaders.gl/core';
 import { GLTFLoader } from '@loaders.gl/gltf';
 import { groupBuffersByType } from './group';
 import { applyStyle } from './style';
-import * as Utils from "../../utils"
+import * as Utils from "../../../utils"
 import { MetacityWorkerInput } from './types';
 
 
@@ -25,15 +25,25 @@ async function loadModel(message: any) {
         meshASM.addMesh(mesh.positions, colorArr, mesh.meta);
     }
 
+    const pointsASM = new Utils.Assemblers.PointsAssembler(meshASM.idCounter);
+    for(let i = 0; i < groups.points.length; i++) {
+        const points = groups.points[i];
+        pointsASM.addPoints(points.positions, points.meta);
+    }  
+
+    const pointBuffers = pointsASM.toBuffers();
     const meshBuffers = meshASM.toBuffers();
-    if (styles.length > 0) {
+    
+    if (styles.length > 0 && meshBuffers) {
         applyStyle(styles, color, meshBuffers.ids, meshBuffers.colors, meshBuffers.metadata);
     }
 
     const transferables = meshASM.pickTransferables(meshBuffers);
+    transferables.push(...pointsASM.pickTransferables(pointBuffers));
 
     self.postMessage({
-        mesh: meshBuffers
+        mesh: meshBuffers,
+        points: pointBuffers
     }, transferables);
 
 }

@@ -4,7 +4,7 @@ import { GraphicsContext } from "../context";
 import { DoubleLineMaterial } from "../materials/doubleLineMaterial";
 import { DoubleLinePickMaterial } from "../materials/doubleLinePickMaterial";
 import { halfsegment } from "./geometry/halfsegment";
-import { Model } from "./model";
+import { BaseInstancedModel } from "./model";
 
 
 const SEGMENT_INSTANCE = new Float32Array(halfsegment());
@@ -15,7 +15,7 @@ type uniforms = {
 }
 
 
-export class DoubleLineModel extends THREE.InstancedMesh implements Model {
+export class DoubleLineModel extends BaseInstancedModel {
     static readonly defaultMaterial = new DoubleLineMaterial();
     static readonly pickableMaterial = new DoubleLinePickMaterial();
 
@@ -39,17 +39,8 @@ export class DoubleLineModel extends THREE.InstancedMesh implements Model {
         mesh.frustumCulled = false; 
         mesh.userData.originalColor = data.colors;
         mesh.instanceMatrix = new THREE.InstancedBufferAttribute(new Float32Array(0), 0);
-
-        mesh.onBeforeRender = (renderer, scene, camera, geometry, material, group) => {
-            (material as THREE.ShaderMaterial).uniforms.thickness.value = uniforms.thickness ?? 20;
-            (material as THREE.ShaderMaterial).uniforms.space.value = uniforms.space ?? 2;
-            (material as THREE.ShaderMaterial).uniformsNeedUpdate = true;
-        }
+        mesh.uniforms = uniforms;
         return mesh;
-    }
-
-    onAdd(context: GraphicsContext) {
-        //pass
     }
 
     setColors(colors: Float32Array) {
@@ -63,9 +54,5 @@ export class DoubleLineModel extends THREE.InstancedMesh implements Model {
     toPickable() {
         this.material = DoubleLineModel.pickableMaterial;
     }
-
-    set grayscale(value: number) {
-        (this.material as THREE.ShaderMaterial).uniforms.grayscale.value = value;
-        (this.material as THREE.ShaderMaterial).uniformsNeedUpdate = true;
-    }
 }
+

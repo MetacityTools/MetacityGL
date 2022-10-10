@@ -3,7 +3,7 @@ import { Navigation, NavigationProps } from './core/navigation';
 import { GPUPicker } from './core/gpuPicker'
 import { Renderer, RendererProps } from './core/renderer';
 import { Model } from './models/model';
-import { Metadata } from '../utils/types';
+import { Metadata, vec3 } from '../utils/types';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 
 
@@ -122,14 +122,18 @@ export class GraphicsContext {
             this.speed_ = value;
     }
 
+    set onNavChange(fn: (target: vec3, position: vec3) => void) {
+        this.navigation.onChange = fn;
+    }
+
     set onBeforeFrame(fn: (time: number) => void) {
         this.beforeFrameUpdateFns.push(fn);
     }
 
-    add(model: Model, metadata?: Metadata) {
+    add(model: any, metadata?: Metadata) {
         this.scene.add(model);
         model.onAdd(this);
-
+        
         if (metadata) {
             for(const key in metadata) {
                 this.metadata[key] = metadata[key];

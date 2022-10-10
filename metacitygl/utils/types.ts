@@ -29,6 +29,10 @@ export interface MovementData {
     instance: THREE.BufferGeometry;
 }
 
+export interface PointData {
+    positions: Float32Array;
+}
+
 export interface GridData {
     from: [number, number],
     to: [number, number],
@@ -45,6 +49,12 @@ export type Metadata = {
 
 export type MetadataRecord = {
     [key: string]: any
+}
+
+export interface vec3 {
+    x: number;
+    y: number;
+    z: number;
 }
 
 export class vec3 {

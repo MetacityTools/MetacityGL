@@ -26,12 +26,16 @@
 .MetacityGLSidebar {
     min-width: 20rem;
     background: rgba(0, 0, 0, 0.95);
+    border-radius: 1rem;
     font-size: 1em;
     color: #fff;
-    border-left: 1px solid #333;
     overflow: auto;
+    position: absolute;
     scrollbar-color: #333 #555;
     scrollbar-width: 0.5rem;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 100;
 }
 
 .MetacityGLSidebar::-webkit-scrollbar {
