@@ -33,6 +33,16 @@ export interface PointData {
     positions: Float32Array;
 }
 
+export interface InstancedMeshData {
+    instancePositions: Float32Array;
+    instanceNormals: Float32Array;
+    positions: Float32Array;
+}
+
+export interface InstancedPointData extends InstancedMeshData {
+    centroid: [number, number, number];
+}
+
 export interface GridData {
     from: [number, number],
     to: [number, number],

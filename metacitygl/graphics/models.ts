@@ -4,6 +4,7 @@ import { GridModel } from "./models/grid";
 import { LineModel } from "./models/line";
 import { MeshModel } from "./models/mesh";
 import { PointModel } from "./models/points";
+import { PointsInstancedModel } from "./models/pointsInstanced";
 
 export {
     DoubleLineModel,
@@ -11,5 +12,6 @@ export {
     MeshModel,
     AgentModel,
     GridModel,
-    PointModel
+    PointModel,
+    PointsInstancedModel,
 }

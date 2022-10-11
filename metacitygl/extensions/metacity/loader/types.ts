@@ -13,5 +13,23 @@ export interface MetacityWorkerInput {
 }
 
 export interface MetacityLoaderOutput {
-    //TODO
+    mesh?: {
+        positions: Float32Array;
+        normals: Float32Array;
+        colors: Float32Array;
+        ids: Float32Array;
+        metadata: {
+            [id: number]: any;
+        };
+        type: string;
+    },
+    points?: {
+        positions: Float32Array;
+        ids: Float32Array;
+        centroid: [number, number, number];
+        metadata: {
+            [id: number]: any;
+        };
+        type: string;
+    }
 }

@@ -34,7 +34,6 @@ export function Grid(props: GridProps) {
     }, [context]);
 
     React.useEffect(() => {
-        console.log("Grid: update model");
         if (model && context) {
             context!.add(model);
         }

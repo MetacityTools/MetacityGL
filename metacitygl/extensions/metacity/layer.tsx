@@ -2,6 +2,7 @@ import * as MetacityGL from "../../metacitygl";
 import { MetacityLoader } from "./loader/loader";
 import axios from "axios";
 import React from "react";
+import { MetacityLoaderOutput } from "./loader/types";
 
 type vec3 = MetacityGL.Utils.Types.vec3;
 
@@ -11,6 +12,10 @@ interface LayerProps extends MetacityGL.MetacityLayerProps {
     color?: number;
     styles?: MetacityGL.Utils.Styles.Style[];
     radius?: number;
+    pointInstanceModel?: string;
+    size?: number;
+    swapDistance?: number;
+    
     children?: React.ReactNode;
 }
 
@@ -30,12 +35,14 @@ interface MetacityLayout {
 
 
 export function MetacityLayer(props: LayerProps) {
-    const { api, context, children } = props;
+    const { api, context, children, pointInstanceModel } = props;
     const [layout, setLayout] = React.useState<MetacityLayout>();
     const [loader] = React.useState<MetacityLoader>(new MetacityLoader());
     const pickable = props.pickable ?? false;
     const color = props.color ?? 0xffffff;
     const radius = props.radius ?? 2500;
+    const swapDistance = props.swapDistance ?? 1000;
+    const size = props.size ?? 1;
     let styles: string[] = [];
 
     if (props.styles) {
@@ -90,29 +97,41 @@ export function MetacityLayer(props: LayerProps) {
             tileSize: tile.size,
             color: color,
             styles: styles,
-        }, (data: any) => {
+        }, (data: MetacityLoaderOutput) => {
             addMesh(data);
             addPoints(data);
         });
     }
 
-    function addPoints(data: any) {
+    async function addPoints(data: MetacityLoaderOutput) {
         if (data.points) {
-            const points = MetacityGL.Graphics.Models.PointModel.create(data.points);
-            points.uniforms = {
-                modelColor: MetacityGL.Utils.Color.colorHexToArr(color)
+            const unfs = { 
+                size,
+                modelColor: MetacityGL.Utils.Color.colorHexToArr(color),
+                swapDistance,
             };
-            context!.add(points);
+
+            if (pointInstanceModel) {
+                const instance = await MetacityGL.Utils.loadGLTF(pointInstanceModel);
+                const points = MetacityGL.Graphics.Models.PointsInstancedModel.create({
+                    ...data.points,
+                    instancePositions: instance.positions,
+                    instanceNormals: instance.normals,
+                    centroid: data.points.centroid,
+                }, unfs);
+                context!.add(points);
+            } else {
+                const points = MetacityGL.Graphics.Models.PointModel.create(data.points, unfs);
+                context!.add(points);
+            }
         }
     }
 
-    function addMesh(data: any) {
+    function addMesh(data: MetacityLoaderOutput) {
         if (data.mesh) {
             const mesh = MetacityGL.Graphics.Models.MeshModel.create(data.mesh);
             if (pickable)
                 context!.add(mesh, data.mesh.metadata);
-
-
             else
                 context!.add(mesh);
         }
