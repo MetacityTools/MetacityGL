@@ -21,7 +21,7 @@ export class PointsInstancedModel extends BaseGroupModel {
         group.add(points);
         group.add(mesh);
 
-        const swp = uniforms.swapDistance || 4000;
+        const swp = uniforms.swapDistance || 1000;
         group.userData.swapDistance = swp * swp;
         group.userData.centroid = new THREE.Vector3(...data.centroid);
 

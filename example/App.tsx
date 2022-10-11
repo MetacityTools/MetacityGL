@@ -36,6 +36,7 @@ function App() {
                 api="https://data.metacity.cc/trees"
                 pointInstanceModel="tree.glb"
                 size={20}
+                swapDistance={4000}
                 color={0x00728a}
             />
         </MetacityGL>

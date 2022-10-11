@@ -12,9 +12,11 @@ interface LayerProps extends MetacityGL.MetacityLayerProps {
     color?: number;
     styles?: MetacityGL.Utils.Styles.Style[];
     radius?: number;
-    children?: React.ReactNode;
     pointInstanceModel?: string;
     size?: number;
+    swapDistance?: number;
+    
+    children?: React.ReactNode;
 }
 
 interface MetacityTile {
@@ -39,6 +41,7 @@ export function MetacityLayer(props: LayerProps) {
     const pickable = props.pickable ?? false;
     const color = props.color ?? 0xffffff;
     const radius = props.radius ?? 2500;
+    const swapDistance = props.swapDistance ?? 1000;
     const size = props.size ?? 1;
     let styles: string[] = [];
 
@@ -104,7 +107,8 @@ export function MetacityLayer(props: LayerProps) {
         if (data.points) {
             const unfs = { 
                 size,
-                modelColor: MetacityGL.Utils.Color.colorHexToArr(color)
+                modelColor: MetacityGL.Utils.Color.colorHexToArr(color),
+                swapDistance,
             };
 
             if (pointInstanceModel) {
