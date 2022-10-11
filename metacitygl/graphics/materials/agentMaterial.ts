@@ -112,7 +112,6 @@ export class AgentMaterial extends THREE.ShaderMaterial {
             vertexShader: vs3D,
             fragmentShader: fs3D,
             side: THREE.DoubleSide,
-            transparent: false
         });
     }
 }

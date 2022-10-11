@@ -22,7 +22,8 @@ function updateUniforms(model: RenderableModel, values: any) {
 function onBeforeRender(model: RenderableModel, renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera, geometry: THREE.BufferGeometry, material: THREE.Material, group: THREE.Group) {    
     if (Object.keys(model._uniforms).length > 0) {
         for(let key in model._uniforms) {
-            (material as THREE.ShaderMaterial).uniforms[key].value = model._uniforms[key];
+            if (key in (material as THREE.ShaderMaterial).uniforms) 
+                (material as THREE.ShaderMaterial).uniforms[key].value = model._uniforms[key];
         }
 
         if (model.timeSensitive)

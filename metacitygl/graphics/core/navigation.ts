@@ -29,11 +29,11 @@ export class Navigation {
     }
 
     get target() {
-        return this.controls.target.clone();
+        return this.controls.target;
     }
 
     get position() {
-        return this.controls.camera.position.clone();
+        return this.controls.camera.position;
     }
 
     get camera() {

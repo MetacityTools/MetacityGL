@@ -6,14 +6,19 @@ export class PointsAssembler {
     positions: number[] = [];
     ids: number[] = [];
     metadata: {[id: number]: any} = {};
+    private centroidAcc = [0, 0, 0];
 
     static readonly type = "points";
 
     constructor(private id = 1) {}
 
     addPoints(vertices: Float32Array|number[], metadata: any) {
-        for(let i = 0; i < vertices.length; i++)
-            this.positions.push(vertices[i]);
+        for(let i = 0; i < vertices.length; i += 3) {
+            this.positions.push(vertices[i], vertices[i + 1], vertices[i + 2]);
+            this.centroidAcc[0] += vertices[i];
+            this.centroidAcc[1] += vertices[i + 1];
+            this.centroidAcc[2] += vertices[i + 2];
+        }
 
         const vertexCount = vertices.length / 3;
         const idcolor = colorHexToArr(this.id);
@@ -36,10 +41,13 @@ export class PointsAssembler {
         if (this.positions.length === 0)
             return undefined;
 
+        const l = this.positions.length / 3;
+
         return {
             positions: new Float32Array(this.positions),
             ids: new Float32Array(this.ids),
             metadata: this.metadata,
+            centroid: [this.centroidAcc[0] / l, this.centroidAcc[1] / l, this.centroidAcc[2] / l],
             type: PointsAssembler.type
         };
     }

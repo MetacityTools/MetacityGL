@@ -12,13 +12,12 @@ export class MeshAssembler {
 
     static readonly type = "mesh";  
 
-    constructor(private id = 1) {
-
-    }
+    constructor(private id = 1) {}
 
     addMesh(vertices: Float32Array|number[], rgb: number[], metadata: any) {
         for(let i = 0; i < vertices.length; i++)
             this.positions.push(vertices[i]);
+            
             
         const vertexCount = vertices.length / 3;
         const idcolor = colorHexToArr(this.id);
@@ -56,5 +55,4 @@ export class MeshAssembler {
             type: MeshAssembler.type
         };
     }
-
 }
