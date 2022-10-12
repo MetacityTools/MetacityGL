@@ -4,7 +4,7 @@ import { GPUPicker } from './core/gpuPicker'
 import { Renderer, RendererProps } from './core/renderer';
 import { Metadata } from '../utils/types';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
-import extensions from '../extensions/extensions';
+import services from '../extensions/services';
 
 
 export interface GraphicsContextProps extends NavigationProps, RendererProps {
@@ -19,7 +19,7 @@ export class GraphicsContext {
     readonly picker: GPUPicker;
     readonly container: HTMLDivElement;
     readonly stats: Stats;
-    readonly extensions = extensions;
+    readonly services = services;
     private metadata: Metadata;
 
     private _speed: number = 0;

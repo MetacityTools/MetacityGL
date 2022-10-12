@@ -3,7 +3,7 @@ import { MetacityLoader } from "./metacity/loader/loader"
 
 
 
-const extensions = {
+const services = {
     metacity: {
         loader: new MetacityLoader(),
     },
@@ -12,4 +12,4 @@ const extensions = {
     }
 }
 
-export default extensions
+export default services

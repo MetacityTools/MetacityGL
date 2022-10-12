@@ -97,7 +97,7 @@ export function MetacityLayer(props: LayerProps) {
 
     function loadTile(tile: MetacityTile) {
         tile.loaded = true;
-        context?.extensions.metacity.loader.load({
+        context?.services.metacity.loader.load({
             url: api + "/" + tile.file,
             tileSize: tile.size,
             color: color,
@@ -125,7 +125,7 @@ export function MetacityLayer(props: LayerProps) {
     }
 
     function addInstancedPoints(data: MetacityLoaderOutput, unfs: InstancedPointsUniforms) {
-        context!.extensions.gltf.loader.load({
+        context!.services.gltf.loader.load({
             pointInstanceModel: pointInstanceModel!,
         }, (instance) => {
             const points = MetacityGL.Graphics.Models.PointsInstancedModel.create({
