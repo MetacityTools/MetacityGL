@@ -8,7 +8,7 @@ uniform float size;
 uniform float scale;
 
 void main(){
-	fscolor = modelColor;
+	fscolor = modelColor / 255.0;
 	vec3 transformed = position;
 	vec4 mvPosition = (modelViewMatrix * vec4(transformed, 1.0));
     gl_PointSize = size * scale / -mvPosition.z;
@@ -34,7 +34,7 @@ export class PointsMaterial extends THREE.ShaderMaterial {
                 size: { value: 10 },
                 scale: { value: 1000 },
                 grayscale: { value: 0 },
-                modelColor: { value: [1, 1, 1] },
+                modelColor: { value: [255, 255, 255] },
             },
             vertexShader: vs3D,
             fragmentShader: fs3D,

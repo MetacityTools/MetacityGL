@@ -30,8 +30,8 @@ export async function loadGLTF(model: string) {
         }
     }
     
-    const dots = computeDots(positions);
     const posArr = new Float32Array(positions);
+    const dots = computeDots(positions);
 
     return {
         positions: posArr,

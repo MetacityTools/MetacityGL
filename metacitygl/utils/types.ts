@@ -8,8 +8,8 @@ export interface LineData {
 export interface MeshData {
     positions: Float32Array;
     dots: Float32Array;
+    colors: Uint8Array;
     ids?: Uint8Array;
-    colors?: Uint8Array;
 } 
 
 export interface AgentData {
@@ -35,7 +35,7 @@ export interface PointData {
 
 export interface InstancedMeshData {
     instancePositions: Float32Array;
-    instanceDots: Uint8Array;
+    instanceDots: Float32Array;
     positions: Float32Array;
 }
 

@@ -14,13 +14,12 @@ export class MeshModel extends BaseMeshModel {
 
         geometry.setAttribute('position', new THREE.BufferAttribute(data.positions, 3));
         geometry.setAttribute('dot', new THREE.BufferAttribute(data.dots, 1));
+        geometry.setAttribute('color', new THREE.BufferAttribute(data.colors, 3, true));
         
         if (data.ids)
             geometry.setAttribute('idcolor', new THREE.BufferAttribute(data.ids, 3, true));
         
-        if (data.colors)
-            geometry.setAttribute('color', new THREE.BufferAttribute(data.colors, 3, true));
-        
+
         const mesh = new MeshModel(geometry, this.defaultMaterial);
         //just to test (mesh.material as THREE.ShaderMaterial).wireframe = true;
         return mesh;
