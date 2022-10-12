@@ -148,6 +148,10 @@ export class GraphicsContext {
         }
     }
 
+    remove(model: any) {
+        this.scene.remove(model);
+    }
+
     getMetadata(key: number) {
         return this.metadata[key];
     }

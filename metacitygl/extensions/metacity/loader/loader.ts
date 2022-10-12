@@ -8,7 +8,7 @@ export class MetacityLoader {
     private idOffset: number = 0;
 
     constructor() {
-        this.workerPool = new WorkerPool(MetacityWorker, 4);
+        this.workerPool = new WorkerPool(MetacityWorker, 8);
     }
 
     load(data: MetacityLoaderInput, callback: (output: MetacityLoaderOutput) => void) {

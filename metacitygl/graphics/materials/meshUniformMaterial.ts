@@ -14,10 +14,6 @@ const fs3D = `
 varying vec3 fscolor;
 uniform float grayscale;
 
-
-//light always shines from the top
-vec3 light = vec3(0.0, 0.0, 1.0);
-
 void main() {
     float grs = fscolor.r * 0.2126 + fscolor.g * 0.7152 + fscolor.b * 0.0722;
 	vec3 gcolor = vec3(grs, grs, grs);
@@ -30,7 +26,7 @@ export class MeshUniformMaterial extends THREE.ShaderMaterial {
     constructor() {
         super({
             uniforms: {
-                grayscale: { value: 1 },
+                grayscale: { value: 0 },
                 modelColor: { value: [255, 255, 255] },
             },
             vertexShader: vs3D,

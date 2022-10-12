@@ -5,6 +5,13 @@ export interface LineData {
     ids?: Uint8Array;
 }
 
+export interface TileData {
+    center: number[];
+    width: number;
+    height: number;
+    color: [number, number, number];
+}
+
 export interface MeshData {
     positions: Float32Array;
     dots: Float32Array;

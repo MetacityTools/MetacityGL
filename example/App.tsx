@@ -12,11 +12,13 @@ function App() {
             <MetacityLayer 
                 api="https://data.metacity.cc/terrain"
                 color={0x1b3452}
+                placeholderColor={0x202c3d}
             />
             <MetacityLayer 
                 api="https://data.metacity.cc/buildings"
                 pickable
                 enableUI
+                placeholderColor={0x202c3d}
                 styles={[
                     new Utils.Styles.Style().add(
                         new Utils.Styles.StyleAttributeRangeExt({
@@ -30,6 +32,7 @@ function App() {
             <MetacityLayer 
                 api="https://data.metacity.cc/bridges"
                 color={0x234063}
+                placeholderColor={0x202c3d}
             />
             <MetacityLayer 
                 api="https://data.metacity.cc/trees"
@@ -37,6 +40,7 @@ function App() {
                 size={20}
                 swapDistance={4000}
                 color={0x00728a}
+                placeholderColor={0x202c3d}
             />
         </MetacityGL>
     )
