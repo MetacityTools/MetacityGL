@@ -3,7 +3,6 @@ import { MetacityLoader } from "./loader/loader";
 import axios from "axios";
 import React from "react";
 import { MetacityLoaderOutput } from "./loader/types";
-import GLTFWorker from "./gltf/worker?worker&inline";
 
 type vec3 = MetacityGL.Utils.Types.vec3;
 
@@ -126,9 +125,9 @@ export function MetacityLayer(props: LayerProps) {
     }
 
     function addInstancedPoints(data: MetacityLoaderOutput, unfs: InstancedPointsUniforms) {
-        const gltfWorker = new GLTFWorker();
-        gltfWorker.onmessage = (message: MessageEvent) => {
-            const instance = message.data;
+        context!.extensions.gltf.loader.load({
+            pointInstanceModel: pointInstanceModel!,
+        }, (instance) => {
             const points = MetacityGL.Graphics.Models.PointsInstancedModel.create({
                 ...data.points!,
                 instancePositions: instance.positions,
@@ -136,9 +135,7 @@ export function MetacityLayer(props: LayerProps) {
                 centroid: data.points!.centroid,
             }, unfs);
             context!.add(points);
-            gltfWorker.terminate();
-        };
-        gltfWorker.postMessage({ pointInstanceModel });
+        })
     }
 
     function addMesh(data: MetacityLoaderOutput) {
