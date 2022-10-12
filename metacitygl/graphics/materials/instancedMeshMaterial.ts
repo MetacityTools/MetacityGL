@@ -1,33 +1,31 @@
 import * as THREE from 'three';
 
 const vs3D = `
-varying vec3 fscolor;
-varying vec3 fsnormal;
-
 attribute vec3 instanceShift;
+attribute float dot;
 
 uniform vec3 modelColor;
 
+varying vec3 fscolor;
+varying float fsdot;
+
 void main(){
 	fscolor = modelColor;
-    fsnormal = normal;
+    fsdot = dot;
 	vec3 transformed = position + instanceShift;
 	gl_Position = projectionMatrix * (modelViewMatrix * vec4(transformed, 1.0));
 }`;
 
 const fs3D = `
-varying vec3 fscolor;
-varying vec3 fsnormal;
+
 uniform float grayscale;
 
-
-//light always shines from the top
-vec3 light = vec3(0.0, 0.0, -1.0);
+varying vec3 fscolor;
+varying float fsdot;
 
 void main() {
     //pseudo-phong shading
-    float diffuse = abs(dot(fsnormal, light));
-    vec3 phcolor = fscolor * diffuse * 0.2 + fscolor * 0.8;
+    vec3 phcolor = fscolor * fsdot * 0.2 + fscolor * 0.8;
     
     float grs = phcolor.r * 0.2126 + phcolor.g * 0.7152 + phcolor.b * 0.0722;
 	vec3 gcolor = vec3(grs, grs, grs);

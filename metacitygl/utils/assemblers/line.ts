@@ -35,8 +35,8 @@ export class LineAssembler {
             
         return {
             positions: new Float32Array(this.positions),
-            colors: new Float32Array(this.colors),
-            ids: new Float32Array(this.ids),
+            colors: new Uint8Array(this.colors),
+            ids: new Uint8Array(this.ids),
             metadata: this.metadata,
             type: LineAssembler.type
         };

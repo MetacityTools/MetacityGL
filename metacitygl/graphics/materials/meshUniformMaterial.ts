@@ -2,13 +2,11 @@ import * as THREE from 'three';
 
 const vs3D = `
 varying vec3 fscolor;
-
 uniform vec3 modelColor;
 
 void main(){
 	fscolor = modelColor;
 	vec3 transformed = position;
-
 	gl_Position = projectionMatrix * (modelViewMatrix * vec4(transformed, 1.0));
 }`;
 
@@ -38,7 +36,6 @@ export class MeshUniformMaterial extends THREE.ShaderMaterial {
             vertexShader: vs3D,
             fragmentShader: fs3D,
             side: THREE.DoubleSide,
-            vertexColors: true,
         });
     }
 }

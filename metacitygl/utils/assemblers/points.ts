@@ -45,7 +45,7 @@ export class PointsAssembler {
 
         return {
             positions: new Float32Array(this.positions),
-            ids: new Float32Array(this.ids),
+            ids: new Uint8Array(this.ids),
             metadata: this.metadata,
             centroid: [this.centroidAcc[0] / l, this.centroidAcc[1] / l, this.centroidAcc[2] / l],
             type: PointsAssembler.type

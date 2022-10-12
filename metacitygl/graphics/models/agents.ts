@@ -58,7 +58,8 @@ type uniforms = {
 }
 
 export class AgentModel extends BaseGroupModel {
-    timeframe: [number, number] | undefined;
+    timeMin: number | undefined;
+    timeMax: number | undefined;
     lastVisible: Movement | undefined;
     movementArrayTimeSorted: Movement[] = [];
 
@@ -73,7 +74,8 @@ export class AgentModel extends BaseGroupModel {
         const colors = new THREE.InstancedBufferAttribute(data.colors, 3, false, 1);
         const dimensions = new THREE.InstancedBufferAttribute(data.dimensions, 3, false, 1);
         const group = new AgentModel();
-        group.timeframe = [data.timestamps[0], data.timestamps[data.timestamps.length - 1]];
+        group.timeMin = data.timestamps[0];
+        group.timeMax = data.timestamps[data.timestamps.length - 1];
 
         for (let i = 0; i < data.positions.length - 1; i++) {
             const movement = Movement.create({
@@ -120,8 +122,10 @@ export class AgentModel extends BaseGroupModel {
             }
         }
 
-        if (this.timeframe !== undefined)
-            context.timeframe = this.timeframe;
+        if (this.timeMin !== undefined && this.timeMax !== undefined) {
+            context.timeMin = this.timeMin;
+            context.timeMax = this.timeMax;
+        }
     }
 
     binarySearchMovement(time: number): Movement | undefined {

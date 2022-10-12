@@ -138,7 +138,7 @@ export class AgentAssembler {
             visible: visibleVis,
             timestamps: new Float32Array(sortedTimestamps),
             dimensions: new Float32Array(this.dimensions),
-            colors: new Float32Array(this.colors),
+            colors: new Uint8Array(this.colors),
             //ids: new Float32Array(this.ids),
             metadata: this.metadata,
         }

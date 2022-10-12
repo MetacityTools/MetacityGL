@@ -15,7 +15,7 @@ export class InstancedMeshModel extends BaseInstancedModel {
     static create(data: InstancedMeshData, uniforms: uniforms): THREE.Object3D {
         const geometry = new THREE.InstancedBufferGeometry();
         geometry.setAttribute('position', new THREE.BufferAttribute(data.instancePositions, 3));
-        geometry.setAttribute('normal', new THREE.BufferAttribute(data.instanceNormals, 3));
+        geometry.setAttribute('dot', new THREE.BufferAttribute(data.instanceDots, 1));
         geometry.setAttribute('instanceShift', 
             new THREE.InstancedBufferAttribute(data.positions, 3, false, 1));
 

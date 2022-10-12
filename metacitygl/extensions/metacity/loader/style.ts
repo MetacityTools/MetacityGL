@@ -12,15 +12,15 @@ function computeColorTable(styles: Utils.Styles.Style[], baseColor: number, meta
 }
 
 
-function computeColorBuffer(ids: Float32Array, colorBuffer: Float32Array, colorTable: Map<number, number[]>) {
+function computeColorBuffer(ids: Uint8Array, colorBuffer: Uint8Array, colorTable: Map<number, number[]>) {
     const idBuffer = new Uint8Array(4);
     const view = new DataView(idBuffer.buffer);
     idBuffer[0] = 0;
 
     const idToNumber = (offset: number) => {
-        idBuffer[1] = ids[offset] * 255;
-        idBuffer[2] = ids[offset + 1] * 255;
-        idBuffer[3] = ids[offset + 2] * 255;
+        idBuffer[1] = ids[offset];
+        idBuffer[2] = ids[offset + 1];
+        idBuffer[3] = ids[offset + 2];
         return view.getInt32(0);
     };
 
@@ -38,7 +38,7 @@ function computeColorBuffer(ids: Float32Array, colorBuffer: Float32Array, colorT
 }
 
 
-export function applyStyle(styles: string[], baseColor: number, ids: Float32Array, colorBuffer: Float32Array, metadata: Utils.Types.Metadata) {
+export function applyStyle(styles: string[], baseColor: number, ids: Uint8Array, colorBuffer: Uint8Array, metadata: Utils.Types.Metadata) {
     const stylesCls = [];
     for (let i = 0; i < styles.length; i++)
         stylesCls.push(Utils.Styles.Style.deserialize(styles[i]));

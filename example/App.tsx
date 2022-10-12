@@ -27,14 +27,13 @@ function App() {
                     ).useColor([0x04d3ff, 0xFF00ea])
                 ]}
             />
-
             <MetacityLayer 
                 api="https://data.metacity.cc/bridges"
                 color={0x234063}
             />
             <MetacityLayer 
                 api="https://data.metacity.cc/trees"
-                pointInstanceModel="tree.glb"
+                pointInstanceModel="/tree.glb"
                 size={20}
                 swapDistance={4000}
                 color={0x00728a}

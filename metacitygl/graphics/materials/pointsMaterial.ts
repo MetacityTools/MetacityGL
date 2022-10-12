@@ -39,7 +39,6 @@ export class PointsMaterial extends THREE.ShaderMaterial {
             vertexShader: vs3D,
             fragmentShader: fs3D,
             side: THREE.DoubleSide,
-            //vertexColors: false,
         });
     }
 }

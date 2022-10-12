@@ -41,6 +41,15 @@ export function MetacityGL(props: MetacityGLProps) {
             canvas.onpointerup = () => {
                 context?.navigation.update();
             }
+
+            let updateCall: NodeJS.Timeout;
+            canvas.addEventListener('wheel', (e) => {
+                clearTimeout(updateCall);
+                updateCall = setTimeout(() => {
+                    context?.navigation.update();
+                    //TODO ideally calculate near and far to fit
+                }, 100);
+            });
         }
     }, [canvasRef, containerRef]);
 

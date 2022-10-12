@@ -1,6 +1,6 @@
 import { computeBBox } from "../utils/bbox";
 import { colorHexToArr } from "../utils/color";
-import { computeNormals } from "../utils/normals";
+import { computeDots } from "../utils/normals";
 
 
 
@@ -35,7 +35,7 @@ export class MeshAssembler {
     pickTransferables(buffers: any) {
         if (buffers === undefined)
             return [];
-        return [buffers.positions.buffer, buffers.normals.buffer, buffers.colors.buffer, buffers.ids.buffer];
+        return [buffers.positions.buffer, buffers.dots.buffer, buffers.colors.buffer, buffers.ids.buffer];
     }
 
     get idCounter() {
@@ -48,9 +48,9 @@ export class MeshAssembler {
             
         return {
             positions: new Float32Array(this.positions),
-            normals: computeNormals(this.positions),
-            colors: new Float32Array(this.colors),
-            ids: new Float32Array(this.ids),
+            dots: computeDots(this.positions),
+            colors: new Uint8Array(this.colors),
+            ids: new Uint8Array(this.ids),
             metadata: this.metadata,
             type: MeshAssembler.type
         };

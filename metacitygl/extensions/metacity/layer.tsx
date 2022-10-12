@@ -3,6 +3,7 @@ import { MetacityLoader } from "./loader/loader";
 import axios from "axios";
 import React from "react";
 import { MetacityLoaderOutput } from "./loader/types";
+import GLTFWorker from "./gltf/worker?worker&inline";
 
 type vec3 = MetacityGL.Utils.Types.vec3;
 
@@ -15,7 +16,7 @@ interface LayerProps extends MetacityGL.MetacityLayerProps {
     pointInstanceModel?: string;
     size?: number;
     swapDistance?: number;
-    
+
     children?: React.ReactNode;
 }
 
@@ -32,6 +33,12 @@ interface MetacityLayout {
     tileHeight: number;
     tiles: MetacityTile[];
 }
+
+interface InstancedPointsUniforms {
+    size: number; 
+    modelColor: [number, number, number]; 
+    swapDistance: number;
+};
 
 
 export function MetacityLayer(props: LayerProps) {
@@ -103,28 +110,36 @@ export function MetacityLayer(props: LayerProps) {
         });
     }
 
-    async function addPoints(data: MetacityLoaderOutput) {
+    function addPoints(data: MetacityLoaderOutput) {
         if (data.points) {
-            const unfs = { 
+            const unfs = {
                 size,
                 modelColor: MetacityGL.Utils.Color.colorHexToArr(color),
                 swapDistance,
             };
-
             if (pointInstanceModel) {
-                const instance = await MetacityGL.Utils.loadGLTF(pointInstanceModel);
-                const points = MetacityGL.Graphics.Models.PointsInstancedModel.create({
-                    ...data.points,
-                    instancePositions: instance.positions,
-                    instanceNormals: instance.normals,
-                    centroid: data.points.centroid,
-                }, unfs);
-                context!.add(points);
+                addInstancedPoints(data, unfs);
             } else {
                 const points = MetacityGL.Graphics.Models.PointModel.create(data.points, unfs);
                 context!.add(points);
             }
         }
+    }
+
+    function addInstancedPoints(data: MetacityLoaderOutput, unfs: InstancedPointsUniforms) {
+        const gltfWorker = new GLTFWorker();
+        gltfWorker.onmessage = (message: MessageEvent) => {
+            const instance = message.data;
+            const points = MetacityGL.Graphics.Models.PointsInstancedModel.create({
+                ...data.points!,
+                instancePositions: instance.positions,
+                instanceDots: instance.dots,
+                centroid: data.points!.centroid,
+            }, unfs);
+            context!.add(points);
+            gltfWorker.terminate();
+        };
+        gltfWorker.postMessage({ pointInstanceModel });
     }
 
     function addMesh(data: MetacityLoaderOutput) {
