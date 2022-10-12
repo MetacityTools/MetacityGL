@@ -1,4 +1,4 @@
-import { GLTFLoader } from "./metacity/gltf/loader"
+import { GLTFLoader } from "./gtlf/loader"
 import { MetacityLoader } from "./metacity/loader/loader"
 
 

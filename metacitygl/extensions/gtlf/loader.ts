@@ -1,4 +1,4 @@
-import { WorkerPool } from "../../../utils";
+import { WorkerPool } from "../../utils";
 import { GLTFLoaderInput, GLTFLoaderOutput, GLTFWorkerInput } from "./types";
 import GLTFWorker from "./worker?worker&inline";
 
