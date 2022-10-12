@@ -2,9 +2,9 @@ import * as THREE from 'three';
 import { Navigation, NavigationProps } from './core/navigation';
 import { GPUPicker } from './core/gpuPicker'
 import { Renderer, RendererProps } from './core/renderer';
-import { Model } from './models/model';
-import { Metadata, vec3 } from '../utils/types';
+import { Metadata } from '../utils/types';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
+import extensions from '../extensions/extensions';
 
 
 export interface GraphicsContextProps extends NavigationProps, RendererProps {
@@ -19,6 +19,7 @@ export class GraphicsContext {
     readonly picker: GPUPicker;
     readonly container: HTMLDivElement;
     readonly stats: Stats;
+    readonly extensions = extensions;
     private metadata: Metadata;
 
     private _speed: number = 0;

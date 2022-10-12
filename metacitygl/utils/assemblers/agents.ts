@@ -13,6 +13,12 @@ interface Timestamp {
     visible: boolean;
 }
 
+
+
+// FIXME: needs to be refactored:
+// - not necesary to store dimensions for each agent
+// - on `toBuffers`, partition into several agent groups to save space 
+
 export class AgentAssembler {
     colors: number[] = [];
     //ids: number[] = [];

@@ -44,7 +44,6 @@ interface InstancedPointsUniforms {
 export function MetacityLayer(props: LayerProps) {
     const { api, context, children, pointInstanceModel } = props;
     const [layout, setLayout] = React.useState<MetacityLayout>();
-    const [loader] = React.useState<MetacityLoader>(new MetacityLoader());
     const pickable = props.pickable ?? false;
     const color = props.color ?? 0xffffff;
     const radius = props.radius ?? 2500;
@@ -99,7 +98,7 @@ export function MetacityLayer(props: LayerProps) {
 
     function loadTile(tile: MetacityTile) {
         tile.loaded = true;
-        loader.load({
+        context?.extensions.metacity.loader.load({
             url: api + "/" + tile.file,
             tileSize: tile.size,
             color: color,

@@ -17,16 +17,16 @@ export interface MetacityLoaderOutput {
         positions: Float32Array;
         dots: Float32Array;
         colors: Uint8Array;
-        ids: Uint8Array;
-        metadata: {
+        ids?: Uint8Array;
+        metadata?: {
             [id: number]: any;
         };
         type: string;
     },
     points?: {
         positions: Float32Array;
-        ids: Uint8Array;
-        metadata: {
+        ids?: Uint8Array;
+        metadata?: {
             [id: number]: any;
         };
         centroid: [number, number, number];
