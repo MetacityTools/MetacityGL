@@ -1,27 +1,27 @@
 import * as THREE from 'three';
 
 const vs3D = `
-attribute vec3 instanceShift;
 attribute float dot;
 
-uniform vec3 modelColor;
+attribute vec3 center;
+attribute vec3 dimensions;
 
 varying vec3 fscolor;
 varying float fsdot;
 
 void main(){
-	fscolor = modelColor / 255.0;
+	fscolor = color / 255.0;
     fsdot = dot;
-	vec3 transformed = position + instanceShift;
+	vec3 transformed = position;
+    transformed = transformed * dimensions + center;
 	gl_Position = projectionMatrix * (modelViewMatrix * vec4(transformed, 1.0));
 }`;
 
 const fs3D = `
-
-uniform float grayscale;
-
 varying vec3 fscolor;
 varying float fsdot;
+
+uniform float grayscale;
 
 void main() {
     //pseudo-phong shading
@@ -34,16 +34,16 @@ void main() {
 }`;
 
 
-export class InstancedMeshMaterial extends THREE.ShaderMaterial {
+export class TreeMaterial extends THREE.ShaderMaterial {
     constructor() {
         super({
             uniforms: {
                 grayscale: { value: 0 },
-                modelColor: { value: [255, 255, 255] },
             },
             vertexShader: vs3D,
             fragmentShader: fs3D,
             side: THREE.DoubleSide,
+            vertexColors: true,
         });
     }
 }

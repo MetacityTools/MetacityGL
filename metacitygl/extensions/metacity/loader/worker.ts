@@ -19,7 +19,8 @@ async function loadModel(message: any) {
     const colorArr = Utils.Color.colorHexToArr(color);
     const gltf = await load(url, GLTFLoader);
     const groups = groupBuffersByType(gltf);
-    const meshASM = new Utils.Assemblers.MeshAssembler(idOffset);
+    const useMetadata = styles !== undefined && styles.length > 0;
+    const meshASM = new Utils.Assemblers.MeshAssembler(idOffset, useMetadata);
     for(let i = 0; i < groups.meshes.length; i++) {
         const mesh = groups.meshes[i];
         meshASM.addMesh(mesh.positions, colorArr, mesh.meta);
@@ -35,7 +36,7 @@ async function loadModel(message: any) {
     const meshBuffers = meshASM.toBuffers();
     
     if (styles.length > 0 && meshBuffers) {
-        applyStyle(styles, color, meshBuffers.ids, meshBuffers.colors, meshBuffers.metadata);
+        applyStyle(styles, color, meshBuffers.ids!, meshBuffers.colors, meshBuffers.metadata!);
     }
 
     const transferables = meshASM.pickTransferables(meshBuffers);

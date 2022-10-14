@@ -20,7 +20,6 @@ export class PointsInstancedModel extends BaseGroupModel {
         const group = new PointsInstancedModel();
         group.add(points);
         group.add(mesh);
-
         const swp = uniforms.swapDistance || 1000;
         group.userData.swapDistance = swp * swp;
         group.userData.centroid = new THREE.Vector3(...data.centroid);
@@ -29,9 +28,8 @@ export class PointsInstancedModel extends BaseGroupModel {
     }
 
     onAdd(context: GraphicsContext): void {
-        context.onBeforeFrame = () => {
-            const distSqr = context.navigation.position.distanceToSquared(this.userData.centroid);
-            //TODO eliminate swaps every frame 
+        context.onNavChange = (_, position: THREE.Vector3) => {
+            const distSqr = position.distanceToSquared(this.userData.centroid);
             if (distSqr < this.userData.swapDistance) {
                 this.children[0].visible = false;
                 this.children[1].visible = true;

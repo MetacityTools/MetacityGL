@@ -9,10 +9,10 @@ export class PointsAssembler {
     private centroidAcc = [0, 0, 0];
 
     static readonly type = "points";
+    constructor(private id = 1, private useMetadata: boolean = false) {
+    }
 
-    constructor(private id = 1) {}
-
-    addPoints(vertices: Float32Array|number[], metadata: any) {
+    addPoints(vertices: Float32Array|number[], metadata?: any) {
         for(let i = 0; i < vertices.length; i += 3) {
             this.positions.push(vertices[i], vertices[i + 1], vertices[i + 2]);
             this.centroidAcc[0] += vertices[i];
@@ -20,21 +20,29 @@ export class PointsAssembler {
             this.centroidAcc[2] += vertices[i + 2];
         }
 
-        const vertexCount = vertices.length / 3;
-        const idcolor = colorHexToArr(this.id);
-        for (let i = 0; i < vertexCount; i++) {
-            this.ids.push(idcolor[0], idcolor[1], idcolor[2]);
+        if (this.useMetadata) {
+            const vertexCount = vertices.length / 3;
+            const idcolor = colorHexToArr(this.id);
+            for (let i = 0; i < vertexCount; i++) {
+                this.ids.push(idcolor[0], idcolor[1], idcolor[2]);
+            }
+            const bbox = computeBBox(vertices);
+            metadata["height"] = bbox[1][2] - bbox[0][2];
+            this.metadata[this.id++] = metadata;   
         }
-
-        metadata["bbox"] = computeBBox(vertices);
-        metadata["height"] = metadata["bbox"][1][2] - metadata["bbox"][0][2];
-        this.metadata[this.id] = metadata;   
     }
 
     pickTransferables(buffers: any) {
+        let transferables: any[] = [];
+
         if (buffers === undefined)
-            return [];
-        return [buffers.positions.buffer, buffers.ids.buffer];
+            return transferables;
+
+        transferables.push(buffers.positions.buffer);
+        if (buffers.ids !== undefined)
+            transferables.push(buffers.ids.buffer);
+
+        return transferables;
     }
 
     toBuffers() {
@@ -45,9 +53,9 @@ export class PointsAssembler {
 
         return {
             positions: new Float32Array(this.positions),
-            ids: new Float32Array(this.ids),
-            metadata: this.metadata,
             centroid: [this.centroidAcc[0] / l, this.centroidAcc[1] / l, this.centroidAcc[2] / l],
+            ids: this.useMetadata ? new Uint8Array(this.ids) : undefined,
+            metadata: this.useMetadata ? this.metadata : undefined,
             type: PointsAssembler.type
         };
     }

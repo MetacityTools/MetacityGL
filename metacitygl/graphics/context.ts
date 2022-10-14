@@ -2,13 +2,12 @@ import * as THREE from 'three';
 import { Navigation, NavigationProps } from './core/navigation';
 import { GPUPicker } from './core/gpuPicker'
 import { Renderer, RendererProps } from './core/renderer';
-import { Model } from './models/model';
-import { Metadata, vec3 } from '../utils/types';
+import { Metadata } from '../utils/types';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
+import services from '../extensions/services';
 
 
 export interface GraphicsContextProps extends NavigationProps, RendererProps {
-    onFrame?: (time: number, timeMax: number) => void;
     container: HTMLDivElement;
 }
 
@@ -20,13 +19,14 @@ export class GraphicsContext {
     readonly picker: GPUPicker;
     readonly container: HTMLDivElement;
     readonly stats: Stats;
+    readonly services = services;
     private metadata: Metadata;
 
-    private speed_: number = 0;
-    private time_: number = 0;
-    private timeframe_: [number, number] = [Infinity, -Infinity];
+    private _speed: number = 0;
+    private _time: number = 0;
+    private _timeMin = Infinity;
+    private _timeMax = -Infinity;
 
-    private onFrameFn: ((time: number, timeMax: number) => void) | undefined;
     private beforeFrameUpdateFns: ((time: number) => void)[] = [];
 
     constructor(props: GraphicsContextProps) {
@@ -40,7 +40,6 @@ export class GraphicsContext {
         this.stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
         document.body.appendChild( this.stats.dom );
         this.setupStats();
-        this.onFrameFn = props.onFrame;
 
         let time = Date.now();
         const frame = async () => {
@@ -49,7 +48,7 @@ export class GraphicsContext {
             time = this.updateTime(time);
 
             //update
-            this.beforeFrameUpdateFns.forEach(fn => fn(this.time_));
+            this.beforeFrameUpdateFns.forEach(fn => fn(this._time));
 
             //rendering
             this.navigation.controls.update();
@@ -63,19 +62,15 @@ export class GraphicsContext {
     }
 
     private updateTime(time: number) {
-        if (this.speed_ !== 0) {
-            const delta = (Date.now() - time) / 1000 * this.speed_;
-            this.time_ = (this.time_ + delta) % this.timeframe_[1];
+        if (this._speed !== 0) {
+            const delta = (Date.now() - time) / 1000 * this._speed;
+            this._time = (this._time + delta) % this._timeMax;
 
-            if (this.time_ < this.timeframe_[0])
-                this.time_ = this.timeframe_[0];
+            if (this._time < this._timeMin)
+                this._time = this._timeMin;
         }
         
-        this.scene.userData.time = this.time_;
-        
-        if (this.onFrameFn)
-        this.onFrameFn(this.time_, this.timeframe_[1]);
-        
+        this.scene.userData.time = this._time;
         time = Date.now();
         return time;
     }
@@ -94,35 +89,44 @@ export class GraphicsContext {
         this.stats.dom.style.display = this.stats.dom.style.display === 'none' ? 'block' : 'none';
     }
 
-    get timeframe() {
-        return this.timeframe_;
-    }
-
-    get timeRunning() {
-        return this.timeframe_[1] !== -Infinity;
-    }
-
     set time(t: number) {
-        this.time_ = t;
+        this._time = t;
         this.scene.userData.time = t;
     }
 
-    set timeframe(timeframe: [number, number]) {
-        this.timeframe_[0] = Math.min(this.timeframe_[0], timeframe[0]);
-        this.timeframe_[1] = Math.max(this.timeframe_[1], timeframe[1]);
-
-        if (this.speed_ === 0){
-            this.time_ = this.timeframe_[0];
-            this.speed_ = 1;
-        }
+    get time() {
+        return this._time;
     }
 
+    get timeMin() {
+        return this._timeMin;
+    }
+
+    set timeMin(value: number) {
+        this._timeMin = Math.min(value, this._timeMax);
+    }
+
+    get timeMax() {
+        return this._timeMax;
+    }
+
+    set timeMax(value: number) {
+        this._timeMax = Math.max(value, this._timeMax);
+    }
+    
     set speed(value: number) {
-        if(this.timeRunning)
-            this.speed_ = value;
+        this._speed = value;
     }
 
-    set onNavChange(fn: (target: vec3, position: vec3) => void) {
+    get speed() {
+        return this._speed;
+    }
+
+    get timeRunning() {
+        return this._speed !== 0 && this._timeMax > this._timeMin;
+    }
+
+    set onNavChange(fn: (target: THREE.Vector3, position: THREE.Vector3) => void) {
         this.navigation.onChange = fn;
     }
 
@@ -142,6 +146,10 @@ export class GraphicsContext {
             pickModel.toPickable();
             this.picker.addPickable(pickModel);
         }
+    }
+
+    remove(model: any) {
+        this.scene.remove(model);
     }
 
     getMetadata(key: number) {

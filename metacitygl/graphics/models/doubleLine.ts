@@ -22,12 +22,10 @@ export class DoubleLineModel extends BaseInstancedModel {
     static create(data: LineData, uniforms: uniforms) {
         const geometry = new THREE.InstancedBufferGeometry();
         geometry.setAttribute('position', new THREE.BufferAttribute(SEGMENT_INSTANCE, 3));
-        geometry.setAttribute('lineStart', new THREE.InterleavedBufferAttribute(
-            new THREE.InstancedInterleavedBuffer(data.positions, 6, 1), 3, 0));
 
-        geometry.setAttribute('lineEnd', new THREE.InterleavedBufferAttribute(
-            new THREE.InstancedInterleavedBuffer(data.positions, 6, 1), 3, 3));
-
+        const buffer = new THREE.InstancedInterleavedBuffer(data.positions, 6, 1);
+        geometry.setAttribute('lineStart', new THREE.InterleavedBufferAttribute(buffer, 3, 0));
+        geometry.setAttribute('lineEnd', new THREE.InterleavedBufferAttribute(buffer, 3, 3));
         geometry.setAttribute('color', new THREE.InstancedBufferAttribute(data.colors, 3, true, 1));
         
         if (data.ids)

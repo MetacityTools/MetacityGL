@@ -34,15 +34,16 @@ export function Timeline(props: TimelineProps) {
         if (props.context) {
             props.context.onBeforeFrame = (time) => {
                 setTime(time);
-                const timeframe = props.context?.timeframe;
-                if (timeframe) {
-                    setTimeStart(timeframe[0]);
-                    setTimeEnd(timeframe[1]);
+                const timeRunning = props.context?.timeRunning;
+                if (timeRunning && !initialized) {
+                    setInitialized(timeRunning);
                 }
 
-                const timeRunning = props.context?.timeRunning;
-                if (timeRunning !== undefined && !initialized) {
-                    setInitialized(timeRunning);
+                if (initialized) {
+                    const timeMin = props.context?.timeMin ?? 0;
+                    const timeMax = props.context?.timeMax ?? 0;
+                    setTimeStart(timeMin);
+                    setTimeEnd(timeMax);
                 }
             }
         }

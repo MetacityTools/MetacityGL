@@ -2,23 +2,17 @@ import * as THREE from 'three';
 
 const vs3D = `
 varying vec3 fscolor;
-
 uniform vec3 modelColor;
 
 void main(){
-	fscolor = modelColor;
+	fscolor = modelColor / 255.0;
 	vec3 transformed = position;
-
 	gl_Position = projectionMatrix * (modelViewMatrix * vec4(transformed, 1.0));
 }`;
 
 const fs3D = `
 varying vec3 fscolor;
 uniform float grayscale;
-
-
-//light always shines from the top
-vec3 light = vec3(0.0, 0.0, 1.0);
 
 void main() {
     float grs = fscolor.r * 0.2126 + fscolor.g * 0.7152 + fscolor.b * 0.0722;
@@ -32,13 +26,12 @@ export class MeshUniformMaterial extends THREE.ShaderMaterial {
     constructor() {
         super({
             uniforms: {
-                grayscale: { value: 1 },
-                modelColor: { value: [0, 0, 0] },
+                grayscale: { value: 0 },
+                modelColor: { value: [255, 255, 255] },
             },
             vertexShader: vs3D,
             fragmentShader: fs3D,
             side: THREE.DoubleSide,
-            vertexColors: true,
         });
     }
 }

@@ -1,23 +1,34 @@
 
 export interface LineData {
     positions: Float32Array;
-    colors: Float32Array;
-    ids?: Float32Array;
+    colors: Uint8Array;
+    ids?: Uint8Array;
+}
+
+export interface TileData {
+    center: number[];
+    width: number;
+    height: number;
+    color: [number, number, number];
 }
 
 export interface MeshData {
     positions: Float32Array;
-    normals: Float32Array;
-    ids?: Float32Array;
-    colors?: Float32Array;
+    dots: Float32Array;
+    colors: Uint8Array;
+    ids?: Uint8Array;
 } 
 
 export interface AgentData {
     positions: Float32Array[];
     visible: Float32Array[];
     timestamps: Float32Array;
-    colors: Float32Array;
-    dimensions: Float32Array;
+    colors: Uint8Array;
+    dimensions: Float32Array; //questionalbe, would be nice to remove
+}
+
+export interface TreeData {
+    array: Float32Array; //center/dim/color
 }
 
 export interface MovementData {
@@ -33,9 +44,14 @@ export interface PointData {
     positions: Float32Array;
 }
 
+export interface InstanceData {
+    positions: Float32Array;
+    dots: Float32Array;
+}
+
 export interface InstancedMeshData {
     instancePositions: Float32Array;
-    instanceNormals: Float32Array;
+    instanceDots: Float32Array;
     positions: Float32Array;
 }
 

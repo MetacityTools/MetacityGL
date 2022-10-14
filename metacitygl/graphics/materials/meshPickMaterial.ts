@@ -2,7 +2,6 @@ import * as THREE from 'three';
 
 const vs3D = `
 attribute vec3 idcolor;
-
 varying vec3 fscolor;
 
 void main(){

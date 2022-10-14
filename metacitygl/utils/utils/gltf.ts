@@ -1,6 +1,6 @@
 import { load }  from '@loaders.gl/core';
 import { GLTFLoader } from '@loaders.gl/gltf';
-import { computeNormals } from './normals';
+import { computeDots } from './normals';
 
 
 export async function loadGLTF(model: string) {
@@ -30,11 +30,11 @@ export async function loadGLTF(model: string) {
         }
     }
     
-    const normals = computeNormals(positions);
     const posArr = new Float32Array(positions);
+    const dots = computeDots(positions);
 
     return {
         positions: posArr,
-        normals: normals
+        dots: dots
     }
 }
