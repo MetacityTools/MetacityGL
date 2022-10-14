@@ -1,40 +1,51 @@
 
 
-export interface TreeModel {
+export interface SubTreeQuery {
     array?: Float32Array;
     filled: number;
 }
 
-export interface TreeGeometry extends TreeModel {
+export interface TreeQuery extends SubTreeQuery {
     tilesToLoad: {
         name: string;
         size: number;
-        model: TreeModel;
+        model: SubTreeQuery;
     }[];
+}
+
+export interface TreeConfig {
+    loadingRadius?: number;
+    requestTileRadius?: number;
+    distFactor?: number;
+    distZFactor?: number;
+    radFactor?: number;
+    visualizeTree?: boolean;
+    zOffset?: number;
 }
 
 export interface TreeWorkerInitInput {
     api: string;
     styles: string[];
     color: number;
+    config: TreeConfig
 }
 
-export interface TreeWorkerOutput extends TreeGeometry {}
+export interface TreeWorkerOutput extends TreeQuery {}
 
-export interface TreeQuadrantData {
+export interface QuadrantData {
     z: [number, number];
-    metadata: {
+    metadata?: {
         [key: string]: number|string;
     }
-    sw?: TreeQuadrantData;
-    se?: TreeQuadrantData;
-    nw?: TreeQuadrantData;
-    ne?: TreeQuadrantData;
+    sw?: QuadrantData;
+    se?: QuadrantData;
+    nw?: QuadrantData;
+    ne?: QuadrantData;
     file?: string;
     size: number;
 }
 
-export interface TreeData extends TreeQuadrantData {
+export interface QuadTreeData extends QuadrantData {
     border: {
         min: [number, number];
         max: [number, number];

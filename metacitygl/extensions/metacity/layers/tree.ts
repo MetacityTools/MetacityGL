@@ -1,16 +1,19 @@
 import * as MetacityGL from "../../../metacitygl";
-import { LayerProps } from "../props";
 import TreeWorker from "../tree/worker?worker&inline"; 
-import { TreeWorkerOutput } from "../tree/types";
+import { TreeConfig, TreeWorkerOutput } from "../tree/types";
 import { Layer } from "./base";
+import { TreeLayerProps } from "../props";
 
 
 export class TreeLayer extends Layer {
     treeWorker!: Worker;
     treeModel?: MetacityGL.Graphics.Models.TreeModel;
 
-    constructor(props: LayerProps) {
+    treeConfig: TreeConfig;
+
+    constructor(props: TreeLayerProps) {
         super(props);
+        this.treeConfig = props.tree;
     }
 
     setup() {
@@ -31,7 +34,8 @@ export class TreeLayer extends Layer {
                 x: (this.context.navigation.target.x),
                 y: (this.context.navigation.target.y),
                 z:  this.context.navigation.position.distanceTo(this.context.navigation.target),
-            }
+            },
+            treeConfig: this.treeConfig,
         });
 
         this.context.onNavChange = (tar, pos) => {

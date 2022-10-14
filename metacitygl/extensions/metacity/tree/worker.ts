@@ -1,7 +1,7 @@
 
 
 
-import { TreeWorkerInitInput } from './types';
+import { TreeConfig, TreeWorkerInitInput } from './types';
 import axios from 'axios';
 import { QuadTree } from './tree';
 import * as Utils from '../../../utils';
@@ -21,7 +21,7 @@ async function loadModel(message: any) {
     const data = message.data;
 
     if (data.api) {
-        await initWorker(data.api, data.color, data.styles);
+        await initWorker(data.api, data.color, data.styles, data.treeConfig);
     } 
     
     if (data.position) {
@@ -31,7 +31,7 @@ async function loadModel(message: any) {
     }
 }
 
-async function initWorker(api: string, color: number, styles: string[]) {
+async function initWorker(api: string, color: number, styles: string[], config: TreeConfig) {
     const meta = api + '/meta.json';
     const treedata = await axios.get(meta);
     const { data } = treedata;
@@ -40,28 +40,25 @@ async function initWorker(api: string, color: number, styles: string[]) {
     for (let i = 0; i < styles.length; i++)
         stylesCls.push(Utils.Styles.Style.deserialize(styles[i]));
 
-    console.log(data);
     tree = new QuadTree({
         data, 
         bmin: data.border.min, 
         bmax: data.border.max,
         color: arrColor,
-        styles: stylesCls
+        styles: stylesCls,
+        config
     });
     console.log(`Tree requires MAX ${tree.spaceRequired() / 1024 / 1024} MB`);
 }
 
 function constructModel(position: {x: number, y: number, z: number}) {
-    
-
-
     const geometry = {
         array: tree.visualizeTree ? new Float32Array(tree.spaceRequired()) : undefined,
         filled: 0,
         tilesToLoad: []
     };
 
-    tree.geometry(position, geometry);
+    tree.query(position, geometry);
     return geometry;
 }
 

@@ -16,6 +16,9 @@ export function groupBuffersByType(gltf: any) : ModelGroups {
         meshes: []
     };
 
+    if (!gltf.meshes)
+        return groups;
+
     for(let i = 0; i < gltf.meshes.length; i++) {
         const model = gltf.meshes[i];
         const positions = model.primitives[0].attributes.POSITION;

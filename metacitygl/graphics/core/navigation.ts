@@ -18,7 +18,7 @@ export class Navigation {
     constructor(props: NavigationProps) {
         let { position, target } = parseUrl();
         this.controls = new MapControls(props, props.canvas);
-        this.offset = props.offset ?? 8000;
+        this.offset = props.offset ?? 5000;
         target = target || props.target || [0, 0, 0];        
         position = position || props.position || this.isoPosition(target);
         this.set(new THREE.Vector3(...target), new THREE.Vector3(...position));

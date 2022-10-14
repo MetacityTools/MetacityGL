@@ -1,16 +1,14 @@
-import { TreeGeometry, TreeModel, TreeQuadrantData } from "./types";
+import { TreeQuery, SubTreeQuery, QuadrantData, TreeConfig } from "./types";
 import * as Utils from "../../../utils"
 
 interface QuadTreeProps {
-    data: TreeQuadrantData;
+    data: QuadrantData;
     bmin: [number, number];
     bmax: [number, number];
     color: [number, number, number];
     styles: Utils.Styles.Style[];
-    bellowLoadingLevel?: boolean;
-    radiusLoading?: number;
-    radiusTileRequest?: number;
-    visualizeTree?: boolean;
+    aboveLoadingLevel?: boolean;
+    config: TreeConfig;
 }
 
 export class QuadTree {
@@ -21,7 +19,7 @@ export class QuadTree {
     metadata: { [key: string]: number | string };
     color: number[];
     depth: number;
-    bellowLoadingLevel: boolean;
+    aboveLoadingLevel: boolean;
     url?: string;
     size: number;
 
@@ -32,18 +30,23 @@ export class QuadTree {
     sw?: QuadTree;
     se?: QuadTree;
 
-    LOADING_RADIUS: number = 128 * 128 * 4 * 4;
-    REQEST_TILE_RADIUS: number = 16 * 16;
-    POW_FACTOR = 0.5;
+    LOADING_RADIUS: number = 300;
+    REQEST_TILE_RADIUS: number = 280;
+    DIST_FACTOR = 2.25;
+    DIST_Z_FACTOR = 2;
+    RAD_FACTOR = 2;
 
     cachcedSpaceRequired = 0;
+    cachedDistSqr = 0;
+    cachedRadiusSqr = 0;
     visualizeTree = true;
+    zOffset = 0;
 
 
     constructor(props: QuadTreeProps, depth: number = 0) {
         const { data, bmin, bmax, color, styles } = props;
-        this.bellowLoadingLevel = props.bellowLoadingLevel || false;
-        
+        this.aboveLoadingLevel = props.aboveLoadingLevel ?? true;
+
         this.min = { x: bmin[0], y: bmin[1], z: data.z[0] };
         this.max = { x: bmax[0], y: bmax[1], z: data.z[1] };
 
@@ -63,11 +66,16 @@ export class QuadTree {
         this.size = data.size;
         this.url = data.file;
         this.depth = depth;
-        this.metadata = data.metadata;
+        this.metadata = data.metadata ?? {};
         this.metadata["height"] = this.dimensions.z;
 
-        this.LOADING_RADIUS = props.radiusLoading ?? this.LOADING_RADIUS;
-        this.REQEST_TILE_RADIUS = props.radiusTileRequest ?? this.REQEST_TILE_RADIUS;
+        this.LOADING_RADIUS = (props.config.loadingRadius ?? this.LOADING_RADIUS) ** this.RAD_FACTOR;
+        this.REQEST_TILE_RADIUS = (props.config.requestTileRadius ?? this.REQEST_TILE_RADIUS) ** this.RAD_FACTOR;
+        this.DIST_FACTOR = props.config.distFactor ?? this.DIST_FACTOR;
+        this.DIST_Z_FACTOR = props.config.distZFactor ?? this.DIST_Z_FACTOR;
+        this.RAD_FACTOR = props.config.radFactor ?? this.RAD_FACTOR;
+        this.visualizeTree = props.config.visualizeTree ?? this.visualizeTree;
+        this.zOffset = props.config.zOffset ?? this.zOffset;
 
         this.applyStyles(styles);
         this.initChildren(props, data, depth);
@@ -75,8 +83,8 @@ export class QuadTree {
     }
 
 
-    private initChildren(props: QuadTreeProps, data: TreeQuadrantData, depth: number) {
-        const childLoading = props.bellowLoadingLevel || this.url !== undefined;
+    private initChildren(props: QuadTreeProps, data: QuadrantData, depth: number) {
+        const childLoading = props.aboveLoadingLevel && this.url !== undefined;
         if (data.ne) {
             this.ne = new QuadTree({
                 data: data.ne,
@@ -84,7 +92,8 @@ export class QuadTree {
                 bmax: [this.max.x, this.max.y],
                 color: props.color,
                 styles: props.styles,
-                bellowLoadingLevel: childLoading
+                aboveLoadingLevel: childLoading,
+                config: props.config
             }, depth + 1);
         }
 
@@ -95,7 +104,8 @@ export class QuadTree {
                 bmax: [this.max.x, this.center.y],
                 color: props.color,
                 styles: props.styles,
-                bellowLoadingLevel: childLoading
+                aboveLoadingLevel: childLoading,
+                config: props.config
             }, depth + 1);
         }
 
@@ -106,7 +116,8 @@ export class QuadTree {
                 bmax: [this.center.x, this.center.y],
                 color: props.color,
                 styles: props.styles,
-                bellowLoadingLevel: childLoading
+                aboveLoadingLevel: childLoading,
+                config: props.config
             }, depth + 1);
         }
 
@@ -117,7 +128,8 @@ export class QuadTree {
                 bmax: [this.center.x, this.max.y],
                 color: props.color,
                 styles: props.styles,
-                bellowLoadingLevel: childLoading
+                aboveLoadingLevel: childLoading,
+                config: props.config
             }, depth + 1);
         }
     }
@@ -131,85 +143,104 @@ export class QuadTree {
             this.color = Utils.Color.colorHexToArr(c);
     }
 
-    geometry(position: { x: number, y: number, z: number }, g: TreeGeometry) {
-        if (this.tileLoaded)
-            return;
-
-        const { distSqr, radiusSqr } = this.computeDistances(position);
-        
-        if (!this.bellowLoadingLevel) {
-            const canFullLoad = this.url !== undefined;
-            const fullLoad = this.requestFullLoad(distSqr, radiusSqr);
-
-            if (fullLoad && canFullLoad && g.tilesToLoad) {
-                this.tileLoaded = true;
-                
-                const pch = {
-                    name: this.url!,
-                    size: this.size,
-                    model: {
-                        array: new Float32Array(this.cachcedSpaceRequired),
-                        filled: 0,
-                    }
-                }
-
-                this.buildModel(distSqr, radiusSqr, position, pch.model);
-                g.tilesToLoad.push(pch);
-                return;
-            } 
-        } 
-        
-        this.buildModel(distSqr, radiusSqr, position, g);
+    query(position: { x: number, y: number, z: number }, q: TreeQuery) {
+        this.allChildrenModelLoaded(position, q);
+        this.buildTreeModel(position, q);
     }
 
-    private computeDistances(position: { x: number; y: number; z: number; }) {
-        const distSqr = Math.abs(position.x - this.center.x) ** (2 + this.POW_FACTOR) + Math.abs(position.y - this.center.y) ** (2 + this.POW_FACTOR) + (position.z - this.center.z) ** 2;
-        const radiusSqr = Math.max(this.max.x - this.min.x, this.max.y - this.min.y) ** 2;
-        return { distSqr, radiusSqr };
-    }
-
-    private buildModel(distSqr: number, radiusSqr: number, position: { x: number; y: number; z: number; }, g: TreeModel) {
-        if (!this.isLeaf && distSqr < radiusSqr * this.LOADING_RADIUS) {
-            this.ne?.geometry(position, g as any); //TODO
-            this.se?.geometry(position, g as any);
-            this.sw?.geometry(position, g as any);
-            this.nw?.geometry(position, g as any);
-        } else {
-            //append geometry of current node
-
-            if (!this.visualizeTree || !g.array)
-                return;
-
-            g.array[g.filled++] = this.center.x;
-            g.array[g.filled++] = this.center.y;
-            g.array[g.filled++] = this.center.z;
-            g.array[g.filled++] = this.dimensions.x;
-            g.array[g.filled++] = this.dimensions.y;
-            g.array[g.filled++] = this.dimensions.z;
-            g.array[g.filled++] = this.color[0];
-            g.array[g.filled++] = this.color[1];
-            g.array[g.filled++] = this.color[2];
-        }
-    }
-
-    private requestFullLoad(distSqr: number, radiusSqr: number): boolean {
+    private allChildrenModelLoaded(position: { x: number; y: number; z: number; }, q: TreeQuery) {
         if (this.tileLoaded) {
             return true;
         }
 
-        if (this.isLeaf && distSqr < radiusSqr * this.REQEST_TILE_RADIUS) {    
+        const { distSqr, radiusSqr } = this.computeDistances(position);
+        this.cachedRadiusSqr = radiusSqr;
+        this.cachedDistSqr = distSqr;
+
+        if (this.isLeaf && distSqr < radiusSqr * this.REQEST_TILE_RADIUS) {
             return true;
-        } 
+        }
 
         if (!this.isLeaf && distSqr < radiusSqr * this.REQEST_TILE_RADIUS) {
-            const nw = this.nw ? this.nw?.requestFullLoad(distSqr, radiusSqr) : true;
-            const ne = this.ne ? this.ne?.requestFullLoad(distSqr, radiusSqr) : true;
-            const sw = this.sw ? this.sw?.requestFullLoad(distSqr, radiusSqr) : true;
-            const se = this.se ? this.se?.requestFullLoad(distSqr, radiusSqr) : true;
-            return nw && ne && sw && se;
+            const nw =  this.nw ? this.nw?.allChildrenModelLoaded(position, q) : true;
+            const ne =  this.ne ? this.ne?.allChildrenModelLoaded(position, q) : true;
+            const sw =  this.sw ? this.sw?.allChildrenModelLoaded(position, q) : true;
+            const se =  this.se ? this.se?.allChildrenModelLoaded(position, q) : true;
+            const countYes = (nw ? 1 : 0) + (ne ? 1 : 0) + (sw ? 1 : 0) + (se ? 1 : 0);
+
+            if (countYes > 2)
+            {
+                if (this.url !== undefined) this.tileToQuery(position, q);
+                return true;
+            }
+
         }
 
         return false;
+    }
+
+    private buildTreeModel(position: { x: number; y: number; z: number; }, q: TreeQuery) {
+        if (this.tileLoaded)
+            return;
+
+        const { distSqr, radiusSqr } = this.computeDistances(position);
+
+        if (!this.isLeaf && distSqr < radiusSqr * this.LOADING_RADIUS) {
+            this.ne?.buildTreeModel(position, q);
+            this.se?.buildTreeModel(position, q);
+            this.sw?.buildTreeModel(position, q);
+            this.nw?.buildTreeModel(position, q);
+        } else {
+            //append geometry of current node
+            this.nodeToModel(q);
+        }
+
+    }
+
+    private tileToQuery(position: { x: number; y: number; z: number; }, q: TreeQuery) {
+        this.tileLoaded = true;
+        const pch = {
+            name: this.url!,
+            size: this.size,
+            model: {
+                array: new Float32Array(this.cachcedSpaceRequired),
+                filled: 0,
+            }
+        };
+        this.buildLeafModel(position, pch.model);
+        q.tilesToLoad.push(pch);
+    }
+
+    private buildLeafModel(position: { x: number; y: number; z: number; }, q: SubTreeQuery) {
+        if (!this.isLeaf) {
+            this.ne?.buildLeafModel(position, q);
+            this.se?.buildLeafModel(position, q);
+            this.sw?.buildLeafModel(position, q);
+            this.nw?.buildLeafModel(position, q);
+        } else {
+            this.nodeToModel(q);
+        }
+    }
+
+    private nodeToModel(q: SubTreeQuery) {
+        if (!this.visualizeTree || !q.array)
+            return;
+
+        q.array[q.filled++] = this.center.x;
+        q.array[q.filled++] = this.center.y;
+        q.array[q.filled++] = this.center.z + this.zOffset;
+        q.array[q.filled++] = this.dimensions.x;
+        q.array[q.filled++] = this.dimensions.y;
+        q.array[q.filled++] = this.dimensions.z;
+        q.array[q.filled++] = this.color[0];
+        q.array[q.filled++] = this.color[1];
+        q.array[q.filled++] = this.color[2];
+    }
+
+    private computeDistances(position: { x: number; y: number; z: number; }) {
+        const distSqr = Math.abs(position.x - this.center.x) ** (this.DIST_FACTOR) + Math.abs(position.y - this.center.y) ** (this.DIST_FACTOR) +  Math.abs(position.z - this.center.z) ** (this.DIST_Z_FACTOR);
+        const radiusSqr = Math.max(this.max.x - this.min.x, this.max.y - this.min.y) ** (this.RAD_FACTOR);
+        return { distSqr, radiusSqr };
     }
 
     private get isLeaf() {
@@ -219,7 +250,7 @@ export class QuadTree {
     spaceRequired() {
         let s = 0;
 
-        if(this.isLeaf)
+        if (this.isLeaf)
             s += 9;
 
         if (this.ne)
@@ -230,7 +261,7 @@ export class QuadTree {
             s += this.sw.spaceRequired();
         if (this.nw)
             s += this.nw.spaceRequired();
-            
+
         return s;
     }
 }

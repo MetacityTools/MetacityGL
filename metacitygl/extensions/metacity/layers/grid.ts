@@ -20,11 +20,8 @@ export class GridLayer extends Layer {
     }
 
     setup() {
-        console.log(this.layout);
-
         if (!this.context)
             return;
-
 
         this.initPlaceholders();
         this.context.onNavChange = (t, p) => this.loadTiles(t, p);

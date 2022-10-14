@@ -1,6 +1,6 @@
 {
   "name": "metacitygl",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -13,6 +13,11 @@
     "threejs",
     "react"
   ],
+  "author": {
+    "name": "Vojtěch Tomas",
+    "email": "hello@vojtatom.cz",
+    "url": "https://vojtatom.cz"
+  },
   "files": [
     "dist/**/*"
   ],
