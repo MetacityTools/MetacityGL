@@ -1,4 +1,5 @@
 import * as MetacityGL from "../../metacitygl";
+import { TreeConfig } from "./tree/types";
 
 export interface LayerProps extends MetacityGL.MetacityLayerProps {
     api: string;
@@ -11,4 +12,8 @@ export interface LayerProps extends MetacityGL.MetacityLayerProps {
     size?: number;
     swapDistance?: number;
     children?: React.ReactNode;
+}
+
+export interface TreeLayerProps extends LayerProps {
+    tree: TreeConfig;
 }

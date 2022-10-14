@@ -56,7 +56,6 @@ export class Layer {
     loadTile(tile: MetacityTile) {
         if (!this.context)
             return;
-
         this.context.services.metacity.loader.load({
             url: this.api + "/" + tile.file,
             tileSize: tile.size,
@@ -80,6 +79,7 @@ export class Layer {
                 modelColor: MetacityGL.Utils.Color.colorHexToArr(this.color),
                 swapDistance: this.swapDistance,
             };
+
             if (this.instanceModel) {
                 this.addInstancedPoints(data, unfs);
             } else {

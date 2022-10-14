@@ -19,7 +19,6 @@ export function MetacityLayer(props: LayerProps) {
                 const layout = response.data;
                 layer.layout = layout;
                 setLayoutInit(true);
-                console.log(layer);
             });
         }
     }, [context]);

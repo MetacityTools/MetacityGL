@@ -1,12 +1,10 @@
 import React from "react";
 import * as MetacityGL from "../../metacitygl";
 import { TreeLayer } from "./layers/tree";
-import { LayerProps } from "./props";
+import { TreeLayerProps } from "./props";
 
 
-
-
-export function MetacityTreeLayer(props: LayerProps) {;
+export function MetacityTreeLayer(props: TreeLayerProps) {;
     const { context, children } = props;
     const [layerInit, setLayerInit] = React.useState<boolean>(false);
     const [layer] = React.useState<TreeLayer>(new TreeLayer(props));
