@@ -18,7 +18,7 @@ function normalize(v: number[]) {
     v[2] /= length;
 }
 
-export function computeDots(positions: number[]) {
+export function computeDots(positions: number[]|Float32Array) {
     const dots = new Float32Array(positions.length / 3);
     const v2 = [0, 0, 0];
     const v3 = [0, 0, 0];

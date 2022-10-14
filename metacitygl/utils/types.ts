@@ -27,6 +27,10 @@ export interface AgentData {
     dimensions: Float32Array; //questionalbe, would be nice to remove
 }
 
+export interface TreeData {
+    array: Float32Array; //center/dim/color
+}
+
 export interface MovementData {
     attrStart: THREE.InstancedBufferAttribute;
     attrEnd: THREE.InstancedBufferAttribute;
@@ -38,6 +42,11 @@ export interface MovementData {
 
 export interface PointData {
     positions: Float32Array;
+}
+
+export interface InstanceData {
+    positions: Float32Array;
+    dots: Float32Array;
 }
 
 export interface InstancedMeshData {

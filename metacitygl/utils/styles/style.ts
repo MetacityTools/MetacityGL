@@ -1,4 +1,4 @@
-import { Metadata } from '../types';
+import { Metadata, MetadataRecord } from '../types';
 import { sampleColor } from '../utils/color';
 import { StyleRule } from './rule';
 import { deserializeRule } from './deserialize';
@@ -18,7 +18,7 @@ export class Style {
         return this;
     }
 
-    apply(metadata: Metadata) {
+    apply(metadata: MetadataRecord) {
         let applyColorIndicator = Math.random();
         for (const rule of this.rules) {
             applyColorIndicator = rule.apply(metadata);

@@ -12,7 +12,7 @@ type uniforms = {
 export class InstancedMeshModel extends BaseInstancedModel {
     static readonly defaultMaterial = new InstancedMeshMaterial();
 
-    static create(data: InstancedMeshData, uniforms: uniforms): THREE.Object3D {
+    static create(data: InstancedMeshData, uniforms: uniforms) {
         const geometry = new THREE.InstancedBufferGeometry();
         geometry.setAttribute('position', new THREE.BufferAttribute(data.instancePositions, 3));
         geometry.setAttribute('dot', new THREE.BufferAttribute(data.instanceDots, 1));

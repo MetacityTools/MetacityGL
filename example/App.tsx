@@ -1,7 +1,7 @@
 import React from 'react'
 import './App.css'
 import { MetacityGL, Utils } from '../metacitygl/metacitygl';
-import { MetacityLayer } from '../metacitygl/extensions';
+import { MetacityTreeLayer, MetacityLayer } from '../metacitygl/extensions';
 
 function App() {
 
@@ -9,16 +9,11 @@ function App() {
         <MetacityGL 
                 background={0x151d29}
                 target={[-742441, -1043242, 0]}>
-            <MetacityLayer 
-                api="https://data.metacity.cc/terrain"
-                color={0x1b3452}
-                placeholderColor={0x202c3d}
-            />
-            <MetacityLayer 
-                api="https://data.metacity.cc/buildings"
+            <MetacityTreeLayer 
+                api="https://data.metacity.cc/buildingstest"
                 pickable
                 enableUI
-                placeholderColor={0x202c3d}
+                colorPlaceholder={0x202c3d}
                 styles={[
                     new Utils.Styles.Style().add(
                         new Utils.Styles.StyleAttributeRangeExt({
@@ -29,6 +24,14 @@ function App() {
                     ).useColor([0x04d3ff, 0xFF00ea])
                 ]}
             />
+        </MetacityGL>
+    )
+}
+
+export default App
+
+/*
+
             <MetacityLayer 
                 api="https://data.metacity.cc/bridges"
                 color={0x234063}
@@ -42,8 +45,9 @@ function App() {
                 color={0x00728a}
                 placeholderColor={0x202c3d}
             />
-        </MetacityGL>
-    )
-}
 
-export default App
+                        <MetacityLayer 
+                api="https://data.metacity.cc/terrain"
+                color={0x1b3452}
+                placeholderColor={0x202c3d}
+            />*/
