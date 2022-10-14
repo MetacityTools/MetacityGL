@@ -9,6 +9,8 @@ import { MetacityLayerProps } from "./layer";
 interface MetacityGLProps {
     background?: number;
     children?: React.ReactNode | React.ReactNode[];
+    target?: [number, number, number];
+    position?: [number, number, number];
 }
 
 export function MetacityGL(props: MetacityGLProps) {
@@ -32,6 +34,8 @@ export function MetacityGL(props: MetacityGLProps) {
                 canvas: canvas,
                 container: container,
                 background: props.background ?? 0x000000,
+                target: props.target ?? [0, 0, 0],
+                position: props.position,
             });
             setContext(context);
             context.updateSize();
@@ -39,6 +43,15 @@ export function MetacityGL(props: MetacityGLProps) {
             canvas.onpointerup = () => {
                 context?.navigation.update();
             }
+
+            let updateCall: NodeJS.Timeout;
+            canvas.addEventListener('wheel', (e) => {
+                clearTimeout(updateCall);
+                updateCall = setTimeout(() => {
+                    context?.navigation.update();
+                    //TODO ideally calculate near and far to fit
+                }, 20);
+            });
         }
     }, [canvasRef, containerRef]);
 
@@ -100,6 +113,7 @@ export function MetacityGL(props: MetacityGLProps) {
                                 position: "absolute",
                                 left: hoverLocation?.x,
                                 top: hoverLocation?.y,
+                                pointerEvents: "none",
                             }}
                         >
                             <pre>{JSON.stringify(metadataHover, null, 2) }</pre>
@@ -108,14 +122,16 @@ export function MetacityGL(props: MetacityGLProps) {
                 </div>
             { enableTimeline && <Timeline context={context}/> }
             </div>
-            { enableUI && <div className="MetacityGLSidebar">
+             <div className="MetacityGLSidebar" style={{
+                display: enableUI ? "block" : "none",
+             }}>
                 {children.map((child, index) => {
                     if (React.isValidElement<MetacityLayerProps>(child)) {
                         return React.cloneElement(child, { context: context });
                     }
                 })}
                 <MetacityLabel context={context}/>
-            </div> }
+            </div>
         </div>
     );
 }

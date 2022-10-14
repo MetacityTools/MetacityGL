@@ -33,10 +33,10 @@ export function sampleColor(color: number | number[], indicator: number) {
     return color;
 }
 
-export function colorHex(hex: number) {
-    const r = ( hex >> 16 & 255 ) / 255;
-    const g = ( hex >> 8 & 255 ) / 255;
-    const b = ( hex & 255 ) / 255;
+export function colorHexToArr(hex: number): [number, number, number] {
+    const r = ( hex >> 16 & 255 );
+    const g = ( hex >> 8 & 255 );
+    const b = ( hex & 255 );
     return [r, g, b];
 }
 
@@ -46,7 +46,7 @@ export function colorStrToHex(color: string) {
 
 export function colorStrToArr(str: string): number[] {
     const hex = colorStrToHex(str);
-    return colorHex(hex);
+    return colorHexToArr(hex);
 }
 
 export function colorHexToStr(hex: number): string {

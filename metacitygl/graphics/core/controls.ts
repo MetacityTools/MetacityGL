@@ -16,7 +16,7 @@ export class MapControls extends OrbitControls {
 
     constructor(props: MapControlsProps, domElement: HTMLCanvasElement) {
         const camera = new THREE.PerspectiveCamera(
-            20,
+            30,
             domElement.clientWidth / domElement.clientHeight,
             props.near ?? 200,
             props.far ?? 100000
@@ -34,7 +34,7 @@ export class MapControls extends OrbitControls {
         this.minDistance = props.minDistance ?? 1000;
         this.maxDistance = props.maxDistance ?? 96000;
         this.minPolarAngle = props.minPolarAngle ?? 0.001;
-        this.maxPolarAngle = props.maxPolarAngle ?? Math.PI * 0.3;
+        this.maxPolarAngle = props.maxPolarAngle ?? Math.PI * 0.4;
         this.update();
     }
 

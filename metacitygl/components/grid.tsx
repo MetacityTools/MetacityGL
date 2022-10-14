@@ -34,8 +34,9 @@ export function Grid(props: GridProps) {
     }, [context]);
 
     React.useEffect(() => {
-        if (model && context)
+        if (model && context) {
             context!.add(model);
+        }
     }, [model, context]);
 
     return (null)

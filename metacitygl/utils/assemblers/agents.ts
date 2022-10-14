@@ -1,4 +1,4 @@
-import { colorHex } from "../utils/color";
+import { colorHexToArr } from "../utils/color";
 
 enum AgentAssemblerState {
     Idle,
@@ -12,6 +12,12 @@ interface Timestamp {
     time: number;
     visible: boolean;
 }
+
+
+
+// FIXME: needs to be refactored:
+// - not necesary to store dimensions for each agent
+// - on `toBuffers`, partition into several agent groups to save space 
 
 export class AgentAssembler {
     colors: number[] = [];
@@ -42,7 +48,7 @@ export class AgentAssembler {
         this.agent = [];
         this.colors.push(rgb[0], rgb[1], rgb[2]);
         this.dimensions.push(...dimensions);
-        const idcolor = colorHex(this.id);
+        const idcolor = colorHexToArr(this.id);
         //this.ids.push(idcolor[0], idcolor[1], idcolor[2]);
         this.metadata[this.id] = metadata;
 
@@ -72,6 +78,9 @@ export class AgentAssembler {
     }
 
     toBuffers() {
+        if (this.empty)
+            return undefined;
+
         const sortedTimestamps = Array.from(this.times).sort((a, b) => a - b);
         let positions: number[][] = [];
         let visible: number[][] = [];
@@ -135,13 +144,16 @@ export class AgentAssembler {
             visible: visibleVis,
             timestamps: new Float32Array(sortedTimestamps),
             dimensions: new Float32Array(this.dimensions),
-            colors: new Float32Array(this.colors),
+            colors: new Uint8Array(this.colors),
             //ids: new Float32Array(this.ids),
             metadata: this.metadata,
         }
     }
 
     pickTransferables(buffers: any) {
+        if (buffers == undefined)
+            return [];
+            
         const transferables: Float32Array[] = [];
         for (let i = 0; i < buffers.positions.length; i++)
             transferables.push(buffers.positions[i].buffer);

@@ -18,22 +18,22 @@ export class Navigation {
     constructor(props: NavigationProps) {
         let { position, target } = parseUrl();
         this.controls = new MapControls(props, props.canvas);
-        this.offset = props.offset ?? 8000;
+        this.offset = props.offset ?? 5000;
         target = target || props.target || [0, 0, 0];        
         position = position || props.position || this.isoPosition(target);
         this.set(new THREE.Vector3(...target), new THREE.Vector3(...position));
     }
 
-    set onchange(f: ((target: THREE.Vector3, position: THREE.Vector3 ) => void)) {
+    set onChange(f: ((target: THREE.Vector3, position: THREE.Vector3 ) => void)) {
         this.onchange_.push(f);
     }
 
     get target() {
-        return this.controls.target.clone();
+        return this.controls.target;
     }
 
     get position() {
-        return this.controls.camera.position.clone();
+        return this.controls.camera.position;
     }
 
     get camera() {

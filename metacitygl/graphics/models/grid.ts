@@ -1,18 +1,16 @@
-
-import { LineModel } from "./line";
 import * as THREE from "three";
-import { Model } from "./model";
-import { GraphicsContext } from "../context";
+import { BaseMeshModel } from "./model";
 import { gridXY } from "./geometry/grid";
-import { colorHex } from "../../utils/utils/color";
+import { colorHexToArr } from "../../utils/utils/color";
 import { GridData } from "../../utils/types";
 import { MeshUniformMaterial } from "../materials/meshUniformMaterial";
 
+type uniforms =  { thickness: number };
 
-export class GridModel extends THREE.Mesh implements Model{
-    static create(data: GridData, uniforms: {}) {
-        const buffer = gridXY(data.from, data.to, data.z, data.major, data.divideMajor);
-        const color = colorHex(data.color);
+export class GridModel extends BaseMeshModel {
+    static create(data: GridData, uniforms: uniforms) {
+        const buffer = gridXY(data.from, data.to, data.z, data.major, data.divideMajor, uniforms.thickness);
+        const color = colorHexToArr(data.color);
         
         const geometry = new THREE.BufferGeometry();
         geometry.setAttribute('position', new THREE.BufferAttribute(buffer, 3));
@@ -22,15 +20,11 @@ export class GridModel extends THREE.Mesh implements Model{
 
         const mesh = new GridModel(geometry, material);
         mesh.matrixAutoUpdate = false;
+
         return mesh;
     }
 
     toPickable(): void {
         this.visible = false;
     }
-
-    onAdd(context: GraphicsContext) {
-        //pass
-    }
-
 }
