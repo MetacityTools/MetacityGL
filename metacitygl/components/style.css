@@ -218,7 +218,11 @@ button.appButton:hover {
     background: #000;
 }
 
-.invert .loaded {
+.loadingBlob.loaded {
+    background: #00FF00;
+}
+
+.invert .loadingBlob.loaded {
     background: #00FF00;
 }
 
