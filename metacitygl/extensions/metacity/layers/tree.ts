@@ -16,16 +16,23 @@ export class TreeLayer extends Layer {
         this.treeConfig = props.tree;
     }
 
-    setup() {
+    setup(onLoaded: CallableFunction) {
         if (!this.context)
         return;
 
+        let init = false;
         this.treeWorker = new TreeWorker();
         this.treeWorker.onmessage = (event) => {
             const data = event.data as TreeWorkerOutput;
             this.updateView(data);
+
+            if (!init) {
+                init = true;
+                onLoaded();
+            }
         };
 
+        console.log("TreeLayer setup");
         this.treeWorker.postMessage({
             api: this.api,
             color: this.color,
@@ -73,8 +80,19 @@ export class TreeLayer extends Layer {
             {
                 const model = MetacityGL.Graphics.Models.TreeModel.create(data as MetacityGL.Utils.Types.TreeData);
                 this.treeModel = model;
+                model.uniforms = {
+                    grayscale: 0
+                };
                 this.context.add(model);
             }
+        }
+    }
+
+    setGrayscale(value: number) {
+        if(this.treeModel) {
+            this.treeModel.uniforms = {
+                grayscale: value
+            };
         }
     }
 }

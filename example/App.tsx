@@ -6,52 +6,76 @@ import { MetacityTreeLayer } from '../metacitygl/extensions';
 function App() {
 
     return (
-        <MetacityGL 
-                background={0x151d29}
-                target={[-742921, -1043242, 0]}>
-            <MetacityTreeLayer 
-                api="https://data.metacity.cc/pragueTreesTree"
+        <MetacityGL
+            //background={0x151d29}
+            background={0xFFFFFF}
+            target={[-742921, -1043242, 0]}
+            invertColors
+            >
+<MetacityTreeLayer
+                api="https://data.metacity.cc/pragueTreesFlatTree"
                 instance="/tree.glb"
                 size={20}
                 swapDistance={4000}
-                color={0x00728a}
+                color={0x1ae310}
                 tree={{
                     visualizeTree: false
                 }}
             />
-            <MetacityTreeLayer 
-                api="https://data.metacity.cc/pragueTerrainTree"
-                color={0x1b3452}
+            <MetacityTreeLayer
+                api="https://data.metacity.cc/pragueBuildingFlatTree"
+                color={0XFFFFFF}
                 tree={{
-                    //zOffset: -1
-                }}
-            />
-            <MetacityTreeLayer 
-                api="https://data.metacity.cc/pragueBridgesTree"
-                color={0x234063}
-                tree={{
-                    //zOffset: -1
                     visualizeTree: false
                 }}
             />
-            <MetacityTreeLayer 
-                api="https://data.metacity.cc/pragueBuildingTree"
+            <MetacityTreeLayer
+                api="https://data.metacity.cc/pragueUtilizationTree3"
                 pickable
                 enableUI
-                colorPlaceholder={0x202c3d}
+                color={0xFFFFFF}
                 styles={[
-                    new Utils.Styles.Style().add(
-                        new Utils.Styles.StyleAttributeRangeExt({
-                            attribute: 'height',
-                            min: 20,
-                            max: 50
-                        })
-                    ).useColor([0x04d3ff, 0xFF00ea])
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeRange({ attribute: "CTVUK_KOD", min: 100, max: 1100}))  .useColor([0x000000, 0xFFFFFF]), //hospodářská půda
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 100}))  .useColor(0xFFE5CC), //hospodářská půda
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 200}))  .useColor(0x049F22), //les
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 300}))  .useColor(0x0AD254), //"louky, zahrady"
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 400}))  .useColor(0x5EFC1E), //zeleň v zástavbě
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 401}))  .useColor(0x5EFC1E), //zeleň v zástavbě - veřejná zeleň
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 402}))  .useColor(0x5EFC1E), //zeleň v zástavbě - ostatní zeleň
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 403}))  .useColor(0x5EFC1E), //zeleň v zástavbě - vyhrazená
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 500}))  .useColor(0x66CCFF), //vodní plochy
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 501}))  .useColor(0x66CCFF), //"vodní plochy - řeka, potok"
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 502}))  .useColor(0x66CCFF), //"vodní plochy - rybník, jezírko"
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 503}))  .useColor(0x66CCFF), //"vodní plochy - vodní dílo, hráz"
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 504}))  .useColor(0x66CCFF), //vodní plochy - přístav
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 600}))  .useColor(0xEEEEEE), //zástavba
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 601}))  .useColor(0xEEEEEE), //zástavba - budovy
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 602}))  .useColor(0xEEEEEE), //zástavba - ostatní stavby
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 603}))  .useColor(0xEEEEEE), //zástavba - dvory
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 604}))  .useColor(0xEEEEEE), //zástavba - budovy z ortofotomap
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 700}))  .useColor(0xFCFCFC), //komunikace
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 701}))  .useColor(0xE5E5E5), //komunikace - silnice
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 702}))  .useColor(0xFFE5CC), //komunikace - chodník nebo parková cesta
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 703}))  .useColor(0xFCFCFC), //komunikace - cyklostezka
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 704}))  .useColor(0xE5E5E5), //komunikace - parkoviště
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 705}))  .useColor(0xE5E5E5), //komunikace - samostatné tramvajové těleso
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 800}))  .useColor(0xFCFCFC), //letiště
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 900}))  .useColor(0x5EFC1E), //rekreační plochy
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 901}))  .useColor(0xFCFCFC), //rekreační plochy - sportoviště
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 902}))  .useColor(0xFCFCFC), //rekreační plochy - ostatní
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 1000})) .useColor(0xFFE5E5), //ostatní plochy
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 1001})) .useColor(0xFFE5E5), //ostatní plochy - průmyslový areál
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 1002})) .useColor(0xFFE5E5), //ostatní plochy - ostatní
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 1003})) .useColor(0xFCFCFC), //"ostatní plochy - zpevněné plochy kolem zástavby, komunikací, vodních ploch"
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 1100})) .useColor(0xF2F2FF), //železnice
                 ]}
                 tree={{
-                    zOffset: 5
+                    //visualizeTree: false
                 }}
-            />
+            >
+                <div id="legend">
+                </div>
+            </MetacityTreeLayer>
         </MetacityGL>
     )
 }
@@ -59,47 +83,68 @@ function App() {
 export default App
 
 /*
-
-            <MetacityTreeLayer 
-                api="https://data.metacity.cc/pragueBuildingTree"
-                pickable
-                enableUI
-                colorPlaceholder={0x202c3d}
-                styles={[
-                    new Utils.Styles.Style().add(
-                        new Utils.Styles.StyleAttributeRangeExt({
-                            attribute: 'height',
-                            min: 20,
-                            max: 50
-                        })
-                    ).useColor([0x04d3ff, 0xFF00ea])
-                ]}
-                tree={{}}
-            />
-            <MetacityTreeLayer 
-                api="https://data.metacity.cc/pragueTerrainTree"
-                color={0x1b3452}
-                tree={{
-                    zOffset: 10
-                }}
-            />
-            
-            <MetacityLayer 
-                api="https://data.metacity.cc/bridges"
-                color={0x234063}
-                placeholderColor={0x202c3d}
-            />
-            <MetacityLayer 
-                api="https://data.metacity.cc/trees"
-                pointInstanceModel="/tree.glb"
+<MetacityTreeLayer
+                api="https://data.metacity.cc/pragueTreesFlatTree"
+                instance="/tree.glb"
                 size={20}
                 swapDistance={4000}
-                color={0x00728a}
-                placeholderColor={0x202c3d}
+                color={0x1ae310}
+                tree={{
+                    visualizeTree: false
+                }}
             />
-
-                        <MetacityLayer 
-                api="https://data.metacity.cc/terrain"
-                color={0x1b3452}
-                placeholderColor={0x202c3d}
-            />*/
+            <MetacityTreeLayer
+                api="https://data.metacity.cc/pragueBuildingFlatTree"
+                color={0XFFFFFF}
+                tree={{
+                    visualizeTree: false
+                }}
+            />
+            <MetacityTreeLayer
+                api="https://data.metacity.cc/pragueUtilizationTree3"
+                pickable
+                enableUI
+                color={0xFFFFFF}
+                styles={[
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeRange({ attribute: "CTVUK_KOD", min: 100, max: 1100}))  .useColor([0x000000, 0xFFFFFF]), //hospodářská půda
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 100}))  .useColor(0xFFE5CC), //hospodářská půda
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 200}))  .useColor(0x049F22), //les
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 300}))  .useColor(0x0AD254), //"louky, zahrady"
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 400}))  .useColor(0x5EFC1E), //zeleň v zástavbě
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 401}))  .useColor(0x5EFC1E), //zeleň v zástavbě - veřejná zeleň
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 402}))  .useColor(0x5EFC1E), //zeleň v zástavbě - ostatní zeleň
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 403}))  .useColor(0x5EFC1E), //zeleň v zástavbě - vyhrazená
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 500}))  .useColor(0x66CCFF), //vodní plochy
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 501}))  .useColor(0x66CCFF), //"vodní plochy - řeka, potok"
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 502}))  .useColor(0x66CCFF), //"vodní plochy - rybník, jezírko"
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 503}))  .useColor(0x66CCFF), //"vodní plochy - vodní dílo, hráz"
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 504}))  .useColor(0x66CCFF), //vodní plochy - přístav
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 600}))  .useColor(0xEEEEEE), //zástavba
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 601}))  .useColor(0xEEEEEE), //zástavba - budovy
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 602}))  .useColor(0xEEEEEE), //zástavba - ostatní stavby
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 603}))  .useColor(0xEEEEEE), //zástavba - dvory
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 604}))  .useColor(0xEEEEEE), //zástavba - budovy z ortofotomap
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 700}))  .useColor(0xFCFCFC), //komunikace
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 701}))  .useColor(0xE5E5E5), //komunikace - silnice
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 702}))  .useColor(0xFFE5CC), //komunikace - chodník nebo parková cesta
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 703}))  .useColor(0xFCFCFC), //komunikace - cyklostezka
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 704}))  .useColor(0xE5E5E5), //komunikace - parkoviště
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 705}))  .useColor(0xE5E5E5), //komunikace - samostatné tramvajové těleso
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 800}))  .useColor(0xFCFCFC), //letiště
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 900}))  .useColor(0x5EFC1E), //rekreační plochy
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 901}))  .useColor(0xFCFCFC), //rekreační plochy - sportoviště
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 902}))  .useColor(0xFCFCFC), //rekreační plochy - ostatní
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 1000})) .useColor(0xFFE5E5), //ostatní plochy
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 1001})) .useColor(0xFFE5E5), //ostatní plochy - průmyslový areál
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 1002})) .useColor(0xFFE5E5), //ostatní plochy - ostatní
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 1003})) .useColor(0xFCFCFC), //"ostatní plochy - zpevněné plochy kolem zástavby, komunikací, vodních ploch"
+                    new Utils.Styles.Style().add(new Utils.Styles.StyleAttributeEqualTo({ attribute: "CTVUK_KOD", value: 1100})) .useColor(0xF2F2FF), //železnice
+                ]}
+                tree={{
+                    //visualizeTree: false
+                }}
+            >
+                <div id="legend">
+                </div>
+            </MetacityTreeLayer>
+            */

@@ -12,7 +12,8 @@ export class GLTFLoader {
 
     load(data: GLTFLoaderInput, callback: (output: GLTFLoaderOutput) => void) {
         this.workerPool.process({
-            pointInstanceModel: data.pointInstanceModel
+            pointInstanceModel: data.pointInstanceModel,
+            baseURI: window.location.origin
         }, callback);
     }
 }
