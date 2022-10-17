@@ -28,7 +28,7 @@ export class PointsInstancedModel extends BaseGroupModel {
     }
 
     onAdd(context: GraphicsContext): void {
-        context.onNavChange = (_, position: THREE.Vector3) => {
+        const updateVisibility = (_: THREE.Vector3 | null, position: THREE.Vector3) => {
             const distSqr = position.distanceToSquared(this.userData.centroid);
             if (distSqr < this.userData.swapDistance) {
                 this.children[0].visible = false;
@@ -38,5 +38,8 @@ export class PointsInstancedModel extends BaseGroupModel {
                 this.children[1].visible = false;
             }
         }
+
+        context.onNavChange = updateVisibility;
+        updateVisibility(null, context.navigation.position);
     }
 }

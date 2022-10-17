@@ -7,21 +7,42 @@ interface QuadTreeProps {
     bmax: [number, number];
     color: [number, number, number];
     styles: Utils.Styles.Style[];
-    aboveLoadingLevel?: boolean;
-    config: TreeConfig;
 }
 
+export class QuadTreeSettings {
+    LOADING_RADIUS: number = 500;
+    REQEST_TILE_RADIUS: number = 12;
+    DIST_FACTOR = 2.5;
+    DIST_Z_FACTOR = 2;
+    RAD_FACTOR = 2;
+    visualizeTree = true;
+    zOffset = 0;
+
+    constructor(public config: TreeConfig) {
+        this.update(config);
+    }
+
+    update(config: TreeConfig) {
+        this.RAD_FACTOR = config.radFactor ?? this.RAD_FACTOR;
+        this.LOADING_RADIUS = (config.loadingRadius ?? 500) ** this.RAD_FACTOR;
+        this.REQEST_TILE_RADIUS = (config.requestTileRadius ?? 12) ** this.RAD_FACTOR;
+        this.DIST_FACTOR = config.distFactor ?? this.DIST_FACTOR;
+        this.DIST_Z_FACTOR = config.distZFactor ?? this.DIST_Z_FACTOR;
+        this.visualizeTree = config.visualizeTree ?? this.visualizeTree;
+        this.zOffset = config.zOffset ?? this.zOffset;
+    }
+}
+
+export const settings = new QuadTreeSettings({});
+
 export class QuadTree {
-    min: { x: number, y: number, z: number };
-    max: { x: number, y: number, z: number };
     center: { x: number, y: number, z: number };
     dimensions: { x: number, y: number, z: number };
     metadata: { [key: string]: number | string };
     color: number[];
-    depth: number;
-    aboveLoadingLevel: boolean;
-    url?: string;
     size: number;
+    depth: number;
+    url?: string;
 
     tileLoaded = false;
 
@@ -30,25 +51,10 @@ export class QuadTree {
     sw?: QuadTree;
     se?: QuadTree;
 
-    LOADING_RADIUS: number = 300;
-    REQEST_TILE_RADIUS: number = 280;
-    DIST_FACTOR = 2.25;
-    DIST_Z_FACTOR = 2;
-    RAD_FACTOR = 2;
-
     cachcedSpaceRequired = 0;
-    cachedDistSqr = 0;
-    cachedRadiusSqr = 0;
-    visualizeTree = true;
-    zOffset = 0;
-
 
     constructor(props: QuadTreeProps, depth: number = 0) {
         const { data, bmin, bmax, color, styles } = props;
-        this.aboveLoadingLevel = props.aboveLoadingLevel ?? true;
-
-        this.min = { x: bmin[0], y: bmin[1], z: data.z[0] };
-        this.max = { x: bmax[0], y: bmax[1], z: data.z[1] };
 
         this.center = {
             x: (bmin[0] + bmax[0]) * 0.5,
@@ -69,14 +75,6 @@ export class QuadTree {
         this.metadata = data.metadata ?? {};
         this.metadata["height"] = this.dimensions.z;
 
-        this.LOADING_RADIUS = (props.config.loadingRadius ?? this.LOADING_RADIUS) ** this.RAD_FACTOR;
-        this.REQEST_TILE_RADIUS = (props.config.requestTileRadius ?? this.REQEST_TILE_RADIUS) ** this.RAD_FACTOR;
-        this.DIST_FACTOR = props.config.distFactor ?? this.DIST_FACTOR;
-        this.DIST_Z_FACTOR = props.config.distZFactor ?? this.DIST_Z_FACTOR;
-        this.RAD_FACTOR = props.config.radFactor ?? this.RAD_FACTOR;
-        this.visualizeTree = props.config.visualizeTree ?? this.visualizeTree;
-        this.zOffset = props.config.zOffset ?? this.zOffset;
-
         this.applyStyles(styles);
         this.initChildren(props, data, depth);
         this.cachcedSpaceRequired = this.spaceRequired();
@@ -84,52 +82,48 @@ export class QuadTree {
 
 
     private initChildren(props: QuadTreeProps, data: QuadrantData, depth: number) {
-        const childLoading = props.aboveLoadingLevel && this.url !== undefined;
+        const loadingLevel = (this.url !== undefined);
+
+        if (loadingLevel && !settings.visualizeTree)
+            return;
+
         if (data.ne) {
             this.ne = new QuadTree({
                 data: data.ne,
                 bmin: [this.center.x, this.center.y],
-                bmax: [this.max.x, this.max.y],
+                bmax: props.bmax,
                 color: props.color,
                 styles: props.styles,
-                aboveLoadingLevel: childLoading,
-                config: props.config
             }, depth + 1);
         }
 
         if (data.se) {
             this.se = new QuadTree({
                 data: data.se,
-                bmin: [this.center.x, this.min.y],
-                bmax: [this.max.x, this.center.y],
+                bmin: [this.center.x, props.bmin[1]],
+                bmax: [props.bmax[0], this.center.y],
                 color: props.color,
                 styles: props.styles,
-                aboveLoadingLevel: childLoading,
-                config: props.config
             }, depth + 1);
         }
 
         if (data.sw) {
             this.sw = new QuadTree({
                 data: data.sw,
-                bmin: [this.min.x, this.min.y],
+                bmin: props.bmin,
                 bmax: [this.center.x, this.center.y],
                 color: props.color,
                 styles: props.styles,
-                aboveLoadingLevel: childLoading,
-                config: props.config
             }, depth + 1);
         }
 
         if (data.nw) {
             this.nw = new QuadTree({
                 data: data.nw,
-                bmin: [this.min.x, this.center.y],
-                bmax: [this.center.x, this.max.y],
+                bmin: [props.bmin[0], this.center.y],
+                bmax: [this.center.x, props.bmax[1]],
                 color: props.color,
                 styles: props.styles,
-                aboveLoadingLevel: childLoading,
-                config: props.config
             }, depth + 1);
         }
     }
@@ -144,39 +138,33 @@ export class QuadTree {
     }
 
     query(position: { x: number, y: number, z: number }, q: TreeQuery) {
-        this.allChildrenModelLoaded(position, q);
+        this.loadTileModel(position, q);
+
+        if (!settings.visualizeTree || !q.array)
+            return;
+
         this.buildTreeModel(position, q);
     }
 
-    private allChildrenModelLoaded(position: { x: number; y: number; z: number; }, q: TreeQuery) {
+    private loadTileModel(position: { x: number; y: number; z: number; }, q: TreeQuery) {
         if (this.tileLoaded) {
-            return true;
+            return;
         }
 
         const { distSqr, radiusSqr } = this.computeDistances(position);
-        this.cachedRadiusSqr = radiusSqr;
-        this.cachedDistSqr = distSqr;
 
-        if (this.isLeaf && distSqr < radiusSqr * this.REQEST_TILE_RADIUS) {
-            return true;
+        if (this.url && distSqr < radiusSqr * settings.REQEST_TILE_RADIUS) {
+            this.tileToQuery(position, q);
         }
 
-        if (!this.isLeaf && distSqr < radiusSqr * this.REQEST_TILE_RADIUS) {
-            const nw =  this.nw ? this.nw?.allChildrenModelLoaded(position, q) : true;
-            const ne =  this.ne ? this.ne?.allChildrenModelLoaded(position, q) : true;
-            const sw =  this.sw ? this.sw?.allChildrenModelLoaded(position, q) : true;
-            const se =  this.se ? this.se?.allChildrenModelLoaded(position, q) : true;
-            const countYes = (nw ? 1 : 0) + (ne ? 1 : 0) + (sw ? 1 : 0) + (se ? 1 : 0);
-
-            if (countYes > 2)
-            {
-                if (this.url !== undefined) this.tileToQuery(position, q);
-                return true;
-            }
-
+        if (!this.url && distSqr < radiusSqr * settings.REQEST_TILE_RADIUS) {
+            this.nw?.loadTileModel(position, q);
+            this.ne?.loadTileModel(position, q);
+            this.sw?.loadTileModel(position, q);
+            this.se?.loadTileModel(position, q);
         }
 
-        return false;
+        return;
     }
 
     private buildTreeModel(position: { x: number; y: number; z: number; }, q: TreeQuery) {
@@ -185,7 +173,7 @@ export class QuadTree {
 
         const { distSqr, radiusSqr } = this.computeDistances(position);
 
-        if (!this.isLeaf && distSqr < radiusSqr * this.LOADING_RADIUS) {
+        if (!this.isLeaf && distSqr < radiusSqr * settings.LOADING_RADIUS) {
             this.ne?.buildTreeModel(position, q);
             this.se?.buildTreeModel(position, q);
             this.sw?.buildTreeModel(position, q);
@@ -223,12 +211,12 @@ export class QuadTree {
     }
 
     private nodeToModel(q: SubTreeQuery) {
-        if (!this.visualizeTree || !q.array)
+        if (!settings.visualizeTree || !q.array)
             return;
 
         q.array[q.filled++] = this.center.x;
         q.array[q.filled++] = this.center.y;
-        q.array[q.filled++] = this.center.z + this.zOffset;
+        q.array[q.filled++] = this.center.z + settings.zOffset;
         q.array[q.filled++] = this.dimensions.x;
         q.array[q.filled++] = this.dimensions.y;
         q.array[q.filled++] = this.dimensions.z;
@@ -238,8 +226,8 @@ export class QuadTree {
     }
 
     private computeDistances(position: { x: number; y: number; z: number; }) {
-        const distSqr = Math.abs(position.x - this.center.x) ** (this.DIST_FACTOR) + Math.abs(position.y - this.center.y) ** (this.DIST_FACTOR) +  Math.abs(position.z - this.center.z) ** (this.DIST_Z_FACTOR);
-        const radiusSqr = Math.max(this.max.x - this.min.x, this.max.y - this.min.y) ** (this.RAD_FACTOR);
+        const distSqr = Math.abs(position.x - this.center.x) ** (settings.DIST_FACTOR) + Math.abs(position.y - this.center.y) ** (settings.DIST_FACTOR) +  Math.abs(position.z - this.center.z) ** (settings.DIST_Z_FACTOR);
+        const radiusSqr = Math.max(this.dimensions.x, this.dimensions.y) ** (settings.RAD_FACTOR);
         return { distSqr, radiusSqr };
     }
 

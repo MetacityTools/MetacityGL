@@ -4,23 +4,27 @@ import { GraphicsContext } from "../graphics/context";
 import { Timeline } from "./timeline";
 import { MetacityLabel } from "./label";
 import { MetacityLayerProps } from "./layer";
-
+import { Utils } from "../metacitygl";
 
 interface MetacityGLProps {
     background?: number;
     children?: React.ReactNode | React.ReactNode[];
     target?: [number, number, number];
     position?: [number, number, number];
+    invertColors?: boolean;
 }
 
 export function MetacityGL(props: MetacityGLProps) {
     const [context, setContext] = React.useState<GraphicsContext>();
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
     const containerRef = React.useRef<HTMLDivElement>(null);
+    const LoaderRef = React.useRef<HTMLDivElement>(null);
     const [hoverId, setHoverId] = React.useState<number|null>(0);
     const [metadataHover, setMetadataHover] = React.useState<any>(0);
     const [hoverLocation, setHoverLocation] = React.useState<{ x: number, y: number }|null>(null);
     const children = React.Children.toArray(props.children);
+    let layersLoaded = 0;
+    const color = props.background ? Utils.Color.colorHexToStr(props.background) : "#000000";
 
     const [enableTimeline, setEnableTimeline] = React.useState<boolean>(false);
     const [enableUI, setEnableUI] = React.useState<boolean>(false);
@@ -52,8 +56,15 @@ export function MetacityGL(props: MetacityGLProps) {
                     //TODO ideally calculate near and far to fit
                 }, 20);
             });
+
+            //Does not work in strict mode
+            //return () => {
+            //    window.location.reload();
+            //};
         }
     }, [canvasRef, containerRef]);
+
+
 
     const onMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
         //TODO implement hover
@@ -100,13 +111,51 @@ export function MetacityGL(props: MetacityGLProps) {
             context.updateSize();
     };
 
+    const onLoaded = () => {
+        layersLoaded += 1;
+        console.log("loaded", layersLoaded);
+
+        if (LoaderRef.current) {
+            const container = LoaderRef.current.children[0]
+            container.childNodes.forEach((child, index) => {
+                if (index < layersLoaded) {
+                    (child as HTMLElement).classList.add("loaded");
+                }
+            });
+        }
+
+
+        if (layersLoaded === children.length) {
+            setTimeout(() => {
+                if (LoaderRef.current) {
+                    LoaderRef.current.style.opacity = "0";
+
+                    setTimeout(() => {
+                        if (LoaderRef.current) {
+                            LoaderRef.current.style.display = "none";
+                        }
+                    }, 200);
+                }
+            }, 500);
+        }
+    };
 
     return (
         <div className="MetacityGLContainer">
             <div className="RenderingAreaContainer">
                 <div className="CanvasContainer" ref={containerRef}>
+                    <div id="loader"  className={(props.invertColors ? " invert" : "")} ref={LoaderRef} style={{
+                        backgroundColor: color,
+                    }}>
+                        <div id="loadingBalls">
+                            { children.map((_, index) => 
+                                <div className={"loadingBlob"} key={index} style={{ animationDelay: `${Math.random()}s`}}/>
+                            ) }
+                        </div>
+                        
+                        <div id="loadingName">Loading &#x2022; Metacity Tools</div></div>
                     <canvas ref={canvasRef} onPointerMove={onMove}></canvas>
-                    ({hoverId != null && 
+                    {hoverId != null && 
                         <div 
                             className="hoverDialog"
                             style={{
@@ -118,7 +167,7 @@ export function MetacityGL(props: MetacityGLProps) {
                         >
                             <pre>{JSON.stringify(metadataHover, null, 2) }</pre>
                         </div>
-                    })
+                    }
                 </div>
             { enableTimeline && <Timeline context={context}/> }
             </div>
@@ -127,7 +176,7 @@ export function MetacityGL(props: MetacityGLProps) {
              }}>
                 {children.map((child, index) => {
                     if (React.isValidElement<MetacityLayerProps>(child)) {
-                        return React.cloneElement(child, { context: context });
+                        return React.cloneElement(child, { context: context, onLoaded });
                     }
                 })}
                 <MetacityLabel context={context}/>
