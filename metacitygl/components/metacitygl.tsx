@@ -8,6 +8,7 @@ import { Utils } from "../metacitygl";
 
 interface MetacityGLProps {
     background?: number;
+    antialias?: boolean;
     children?: React.ReactNode | React.ReactNode[];
     target?: [number, number, number];
     position?: [number, number, number];
@@ -40,6 +41,7 @@ export function MetacityGL(props: MetacityGLProps) {
                 background: props.background ?? 0x000000,
                 target: props.target ?? [0, 0, 0],
                 position: props.position,
+                antialias: props.antialias,
             });
             setContext(context);
             context.updateSize();
@@ -171,7 +173,7 @@ export function MetacityGL(props: MetacityGLProps) {
                 </div>
             { enableTimeline && <Timeline context={context}/> }
             </div>
-             <div className="MetacityGLSidebar" style={{
+             <div className={"MetacityGLSidebar" + (props.invertColors ? " invert" : "")} style={{
                 display: enableUI ? "block" : "none",
              }}>
                 {children.map((child, index) => {

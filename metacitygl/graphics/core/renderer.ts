@@ -4,6 +4,7 @@ import * as THREE from "three";
 export interface RendererProps {
     canvas: HTMLCanvasElement;
     background?: number;
+    antialias?: boolean;
 }
 
 
@@ -13,7 +14,7 @@ export class Renderer {
     constructor(props: RendererProps, container: HTMLElement) {
         this.renderer = new THREE.WebGLRenderer({
             canvas: props.canvas,
-            antialias: false,
+            antialias: props.antialias ?? false,
             powerPreference: 'high-performance'
         });
         this.renderer.setClearColor(props.background ?? 0x000000, 1);
