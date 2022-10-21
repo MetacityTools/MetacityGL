@@ -32,7 +32,6 @@ export class TreeLayer extends Layer {
             }
         };
 
-        console.log("TreeLayer setup");
         this.treeWorker.postMessage({
             api: this.api,
             color: this.color,

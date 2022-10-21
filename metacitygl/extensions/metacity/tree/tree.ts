@@ -76,7 +76,8 @@ export class QuadTree {
         this.metadata["height"] = this.dimensions.z;
 
         this.applyStyles(styles);
-        this.initChildren(props, data, depth);
+        //if (depth < 8)
+            this.initChildren(props, data, depth);
         this.cachcedSpaceRequired = this.spaceRequired();
     }
 

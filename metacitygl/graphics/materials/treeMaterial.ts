@@ -13,7 +13,7 @@ void main(){
 	fscolor = color / 255.0;
     fsdot = dot;
 	vec3 transformed = position;
-    transformed = transformed * dimensions + center;
+    transformed = transformed * dimensions * 0.9f + center;
 	gl_Position = projectionMatrix * (modelViewMatrix * vec4(transformed, 1.0));
 }`;
 
