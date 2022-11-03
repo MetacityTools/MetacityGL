@@ -274,3 +274,22 @@ button.appButton:hover {
 .invert #loadingName {
     color: rgba(0, 0, 0, 0.5);
 }
+
+
+.settings {
+    margin: 1rem 1rem 0;
+    font-size: 0.8em;
+}
+
+.settings h2 {
+    font-size: 1rem;
+}
+
+
+.checkInput {
+    display: block;
+}
+
+.checkInput input {
+    margin-right: 0.5rem;
+}

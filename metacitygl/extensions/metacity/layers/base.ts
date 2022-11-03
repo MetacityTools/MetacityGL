@@ -34,6 +34,7 @@ export class Layer {
     swapDistance: number;
     instance?: string;
     instanceModel?: MetacityGL.Utils.Types.InstanceData;
+    skipObjects: number[];
 
     constructor(props: LayerProps) {
         this.api = props.api;
@@ -47,6 +48,7 @@ export class Layer {
             }
         }
         
+        this.skipObjects = props.skipObjects || [];
         this.radius = props.radius ?? 2500;
         this.size = props.size ?? 1;
         this.swapDistance = props.swapDistance ?? 1000;
@@ -61,6 +63,7 @@ export class Layer {
             tileSize: tile.size,
             color: this.color,
             styles: this.styles,
+            skipObjects: this.skipObjects,
         }, (data: MetacityLoaderOutput) => {
             if (tile.placeholder)
                 this.context?.remove(tile.placeholder);

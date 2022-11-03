@@ -12,6 +12,7 @@ export interface LayerProps extends MetacityGL.MetacityLayerProps {
     size?: number;
     swapDistance?: number;
     children?: React.ReactNode;
+    skipObjects?: number[];
 }
 
 export interface TreeLayerProps extends LayerProps {

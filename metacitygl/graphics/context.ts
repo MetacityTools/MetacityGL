@@ -21,6 +21,7 @@ export class GraphicsContext {
     readonly stats: Stats;
     readonly services = services;
     private metadata: Metadata;
+    flyover = false;
 
     private _speed: number = 0;
     private _time: number = 0;
@@ -51,7 +52,13 @@ export class GraphicsContext {
             this.beforeFrameUpdateFns.forEach(fn => fn(this._time));
 
             //rendering
-            this.navigation.controls.update();
+            
+            if (this.flyover) {
+                this.navigation.controls.flyOverStep();
+            } else {
+                this.navigation.controls.update();
+            }
+
             this.renderer.renderer.render(this.scene, this.navigation.camera);
             requestAnimationFrame(frame);
             this.stats.end();
@@ -82,11 +89,19 @@ export class GraphicsContext {
             if (e.key === 's') {
                 this.toggleStats();
             }
+
+            if (e.key === 'f') {
+                this.toggleFlyover();
+            }
         }
     }
 
     toggleStats() {
         this.stats.dom.style.display = this.stats.dom.style.display === 'none' ? 'block' : 'none';
+    }
+
+    toggleFlyover() {
+        this.flyover = !this.flyover;
     }
 
     set time(t: number) {

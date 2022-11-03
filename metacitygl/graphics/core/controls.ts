@@ -11,8 +11,11 @@ export interface MapControlsProps {
     maxPolarAngle?: number;
 }
 
+const UP = new THREE.Vector3(0, 0, 1);
+
 export class MapControls extends OrbitControls {
     readonly camera: THREE.PerspectiveCamera;
+    direction = new THREE.Vector3();
 
     constructor(props: MapControlsProps, domElement: HTMLCanvasElement) {
         const camera = new THREE.PerspectiveCamera(
@@ -41,5 +44,17 @@ export class MapControls extends OrbitControls {
     updateCamera(width: number, height: number) {
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
+    }
+
+    flyOverStep() {
+        const speed = 4;
+        const target = this.target;
+        const position = this.camera.position;
+        this.direction.subVectors(target, position);
+        this.direction.normalize();
+        this.direction.cross(UP);
+        this.direction.setLength(speed);
+        position.add(this.direction);
+        this.update();
     }
 }

@@ -14,7 +14,7 @@ self.onmessage = (message: MessageEvent) => {
 };
 
 async function loadModel(message: any) {
-    const { url, idOffset, color, styles } = message.data as MetacityWorkerInput;
+    const { url, idOffset, color, styles, skipObjects } = message.data as MetacityWorkerInput;
     const colorArr = Utils.Color.colorHexToArr(color);
 
 
@@ -23,17 +23,29 @@ async function loadModel(message: any) {
         const groups = groupBuffersByType(gltf);
         const useMetadata = styles !== undefined && styles.length > 0;
         const meshASM = new Utils.Assemblers.MeshAssembler(idOffset, useMetadata);
+        
+        let layerID = 0;
         for (let i = 0; i < groups.meshes.length; i++) {
             const mesh = groups.meshes[i];
+            if (!mesh.meta)
+                mesh.meta = {};
             mesh.meta["url"] = url;
-            meshASM.addMesh(mesh.positions, colorArr, mesh.meta);
+            mesh.meta["layerID"] = layerID++;
+
+            if (!skipObjects.includes(mesh.meta["layerID"]))
+                meshASM.addMesh(mesh.positions, colorArr, mesh.meta);
         }
 
         const pointsASM = new Utils.Assemblers.PointsAssembler(meshASM.idCounter);
         for (let i = 0; i < groups.points.length; i++) {
             const points = groups.points[i];
+            if (!points.meta)
+                points.meta = {};
             points.meta["url"] = url;
-            pointsASM.addPoints(points.positions, points.meta);
+            points.meta["layerID"] = layerID++;
+
+            if (!skipObjects.includes(points.meta["layerID"]))
+                pointsASM.addPoints(points.positions, points.meta);
         }
 
         const pointBuffers = pointsASM.toBuffers();

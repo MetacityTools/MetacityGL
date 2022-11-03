@@ -3,6 +3,7 @@ export interface MetacityLoaderInput {
     tileSize: number;
     color: number;
     styles: string[];
+    skipObjects: number[];
 }
 
 export interface MetacityWorkerInput {
@@ -10,6 +11,7 @@ export interface MetacityWorkerInput {
     idOffset: number;
     color: number;
     styles: string[];
+    skipObjects: number[]; 
 }
 
 export interface MetacityLoaderOutput {
