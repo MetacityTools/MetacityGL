@@ -1,5 +1,5 @@
 import { vec3 } from "../types";
-import { colorHexToArr } from "../utils/color";
+import { colorHexToArr255 } from "../utils/color";
 
 
 //can be used to construst both lines and double-lines
@@ -18,7 +18,7 @@ export class LineAssembler {
         //TODO does it have to be byte?
         this.colors.push(rgb[0] * 255, rgb[1] * 255, rgb[2] * 255);
         if (this.useMetadata) {
-            const idcolor = colorHexToArr(this.id);
+            const idcolor = colorHexToArr255(this.id);
             this.ids.push(idcolor[0], idcolor[1], idcolor[2]);
             this.metadata[this.id++] = metadata;
         }

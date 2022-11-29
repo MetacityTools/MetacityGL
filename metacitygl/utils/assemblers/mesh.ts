@@ -1,5 +1,5 @@
 import { computeBBox } from "../utils/bbox";
-import { colorHexToArr } from "../utils/color";
+import { colorHexToArr255 } from "../utils/color";
 import { computeDots } from "../utils/normals";
 
 
@@ -26,7 +26,7 @@ export class MeshAssembler {
         }
 
         if (this.useMetadata) {
-            const idcolor = colorHexToArr(this.id);
+            const idcolor = colorHexToArr255(this.id);
             for (let i = 0; i < vertexCount; i++) {
                 this.ids.push(idcolor[0], idcolor[1], idcolor[2]);
             }
