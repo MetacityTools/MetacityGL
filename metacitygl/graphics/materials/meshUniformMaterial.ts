@@ -5,7 +5,7 @@ varying vec3 fscolor;
 uniform vec3 modelColor;
 
 void main(){
-	fscolor = modelColor / 255.0;
+	fscolor = modelColor;
 	vec3 transformed = position;
 	gl_Position = projectionMatrix * (modelViewMatrix * vec4(transformed, 1.0));
 }`;

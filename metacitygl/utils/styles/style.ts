@@ -1,20 +1,21 @@
 import { Metadata, MetadataRecord } from '../types';
-import { sampleColor } from '../utils/color';
+import { sampleColor, parseColorArray } from '../utils/color';
 import { StyleRule } from './rule';
 import { deserializeRule } from './deserialize';
+import { Types } from '../../utils';
 
 
 export class Style {
     rules: StyleRule[] = [];
-    color: number | number[] =  0x00ffff;
+    color: Types.Color | Types.Color[] =  [0, 1, 1];
 
     add(rule: StyleRule) {
         this.rules.push(rule);
         return this;
     }
 
-    useColor(color_: number | number[]) {
-        this.color = color_;
+    useColor(color_: Types.ColorInput | Types.ColorInput[]) {
+        this.color = parseColorArray(color_) ?? [0, 1, 1];
         return this;
     }
 

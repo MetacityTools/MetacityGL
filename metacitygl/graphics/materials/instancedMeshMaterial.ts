@@ -5,14 +5,15 @@ attribute vec3 instanceShift;
 attribute float dot;
 
 uniform vec3 modelColor;
+uniform float size;
 
 varying vec3 fscolor;
 varying float fsdot;
 
 void main(){
-	fscolor = modelColor / 255.0;
+	fscolor = modelColor;
     fsdot = dot;
-	vec3 transformed = position + instanceShift;
+	vec3 transformed = position * size + instanceShift;
 	gl_Position = projectionMatrix * (modelViewMatrix * vec4(transformed, 1.0));
 }`;
 
@@ -40,6 +41,7 @@ export class InstancedMeshMaterial extends THREE.ShaderMaterial {
             uniforms: {
                 grayscale: { value: 0 },
                 modelColor: { value: [255, 255, 255] },
+                size: { value: 2 },
             },
             vertexShader: vs3D,
             fragmentShader: fs3D,

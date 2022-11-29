@@ -1,12 +1,12 @@
 import * as Utils from "../../../utils"
 
-function computeColorTable(styles: Utils.Styles.Style[], baseColor: number, metadataTable: Utils.Types.Metadata) {
+function computeColorTable(styles: Utils.Styles.Style[], baseColor: Utils.Types.Color, metadataTable: Utils.Types.Metadata) {
     const colorTable = new Map<number, number[]>();
     for (const obj in metadataTable) {
         let color = baseColor;
         for (let i = 0; i < styles.length; i++)
             color = styles[i].apply(metadataTable[obj]) ?? color;
-        colorTable.set(parseInt(obj), Utils.Color.colorHexToArr(color));
+        colorTable.set(parseInt(obj), color);
     }
     return colorTable;
 }
@@ -38,7 +38,7 @@ function computeColorBuffer(ids: Uint8Array, colorBuffer: Uint8Array, colorTable
 }
 
 
-export function applyStyle(styles: string[], baseColor: number, ids: Uint8Array, colorBuffer: Uint8Array, metadata: Utils.Types.Metadata) {
+export function applyStyle(styles: string[], baseColor: Utils.Types.Color, ids: Uint8Array, colorBuffer: Uint8Array, metadata: Utils.Types.Metadata) {
     const stylesCls = [];
     for (let i = 0; i < styles.length; i++)
         stylesCls.push(Utils.Styles.Style.deserialize(styles[i]));

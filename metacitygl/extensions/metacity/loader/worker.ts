@@ -15,8 +15,6 @@ self.onmessage = (message: MessageEvent) => {
 
 async function loadModel(message: any) {
     const { url, idOffset, color, styles, skipObjects } = message.data as MetacityWorkerInput;
-    const colorArr = Utils.Color.colorHexToArr(color);
-
 
     try {
         const gltf = await load(url, GLTFLoader);
@@ -33,7 +31,7 @@ async function loadModel(message: any) {
             mesh.meta["layerID"] = layerID++;
 
             if (!skipObjects.includes(mesh.meta["layerID"]))
-                meshASM.addMesh(mesh.positions, colorArr, mesh.meta);
+                meshASM.addMesh(mesh.positions, color, mesh.meta);
         }
 
         const pointsASM = new Utils.Assemblers.PointsAssembler(meshASM.idCounter);

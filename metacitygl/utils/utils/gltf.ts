@@ -14,7 +14,8 @@ export async function loadGLTF(model: string) {
             const attr = model.primitives[j].attributes.POSITION;
             const buffer = attr.value;
             const type = model.primitives[j].mode ?? 4;
-            const indices = model.primitives[j].indices?.value ?? undefined;          
+            const indices = model.primitives[j].indices?.value ?? undefined;  
+
             if (type === 4) {
                 if (indices !== undefined) {
                     for(let k = 0; k < indices.length; k++) {

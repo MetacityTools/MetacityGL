@@ -1,17 +1,13 @@
 import React from "react";
 import "./style.css"
-import { GraphicsContext } from "../graphics/context";
+import { GraphicsContext, UserInputProps } from "../graphics/context";
 import { Timeline } from "./timeline";
 import { MetacityLabel } from "./label";
 import { MetacityLayerProps } from "./layer";
 import { Utils } from "../metacitygl";
 
-interface MetacityGLProps {
-    background?: number;
-    antialias?: boolean;
+interface MetacityGLProps extends UserInputProps  {
     children?: React.ReactNode | React.ReactNode[];
-    target?: [number, number, number];
-    position?: [number, number, number];
     invertColors?: boolean;
 }
 
@@ -39,10 +35,7 @@ export function MetacityGL(props: MetacityGLProps) {
             const context = new GraphicsContext({
                 canvas: canvas,
                 container: container,
-                background: props.background ?? 0x000000,
-                target: props.target ?? [0, 0, 0],
-                position: props.position,
-                antialias: props.antialias,
+                ...props
             });
             setContext(context);
             context.updateSize();
@@ -118,7 +111,6 @@ export function MetacityGL(props: MetacityGLProps) {
 
     const onLoaded = () => {
         layersLoaded += 1;
-        console.log("loaded", layersLoaded);
 
         if (LoaderRef.current) {
             const container = LoaderRef.current.children[0]

@@ -1,4 +1,8 @@
 
+
+export type Color = [number, number, number];
+export type ColorInput = Color | number | string;
+
 export interface LineData {
     positions: Float32Array;
     colors: Uint8Array;

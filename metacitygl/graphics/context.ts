@@ -5,14 +5,24 @@ import { Renderer, RendererProps } from './core/renderer';
 import { Metadata } from '../utils/types';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 import services from '../extensions/services';
+import { StandardRenderingPipeline } from './pipeline/standard';
+import { RenderingPipeline } from './pipeline/base';
+import { BloomProps, BloomRenderingPipeline } from './pipeline/bloom';
 
 
-export interface GraphicsContextProps extends NavigationProps, RendererProps {
+export interface UserInputProps extends NavigationProps, RendererProps, BloomProps {
+    bloom?: boolean;
+}
+
+export interface GraphicsContextProps extends UserInputProps {
     container: HTMLDivElement;
+    canvas: HTMLCanvasElement;
 }
 
 
 export class GraphicsContext {
+    public flyover = false;
+    
     readonly renderer: Renderer;
     readonly scene: THREE.Scene;
     readonly navigation: Navigation;
@@ -21,20 +31,22 @@ export class GraphicsContext {
     readonly stats: Stats;
     readonly services = services;
     private metadata: Metadata;
-    flyover = false;
+    private pipeline: RenderingPipeline;
 
     private _speed: number = 0;
     private _time: number = 0;
+    private _realTime: number = 0;
     private _timeMin = Infinity;
     private _timeMax = -Infinity;
 
     private beforeFrameUpdateFns: ((time: number) => void)[] = [];
 
+
     constructor(props: GraphicsContextProps) {
         this.container = props.container;
-        this.renderer = new Renderer(props, this.container);
+        this.renderer = new Renderer(props, props.canvas, this.container);
         this.scene = new THREE.Scene();
-        this.navigation = new Navigation(props);
+        this.navigation = new Navigation(props, props.canvas);
         this.picker = new GPUPicker(this.renderer.renderer, this.navigation.camera);
         this.metadata = {};
         this.stats = Stats();
@@ -42,44 +54,56 @@ export class GraphicsContext {
         document.body.appendChild( this.stats.dom );
         this.setupStats();
 
-        let time = Date.now();
         const frame = async () => {
-            this.stats.begin();
-            //time management
-            time = this.updateTime(time);
-
-            //update
-            this.beforeFrameUpdateFns.forEach(fn => fn(this._time));
-
-            //rendering
-            
-            if (this.flyover) {
-                this.navigation.controls.flyOverStep();
-            } else {
-                this.navigation.controls.update();
-            }
-
+            this.preRender();
+            this.cameraAnimationStep();
             this.renderer.renderer.render(this.scene, this.navigation.camera);
             requestAnimationFrame(frame);
-            this.stats.end();
+            this.postRender();
         };
 
+        if (props.bloom)
+            this.pipeline = new BloomRenderingPipeline(this, props);
+        else 
+            this.pipeline = new StandardRenderingPipeline(this);
+
         this.updateSize();
-        frame();
+        this._realTime = Date.now();
+        this.pipeline.runRendringLoop();
     }
 
-    private updateTime(time: number) {
+    preRender() {
+        this.stats.begin();
+        //time management
+        this.updateTime();
+        //update
+        this.beforeFrameUpdateFns.forEach(fn => fn(this._time));
+    }
+
+    cameraAnimationStep() {
+        //rendering
+        if (this.flyover) {
+            this.navigation.controls.flyOverStep();
+        } else {
+            this.navigation.controls.update();
+        }
+    }
+
+    postRender() {
+        this.stats.end();
+    }
+
+    private updateTime() {
         if (this._speed !== 0) {
-            const delta = (Date.now() - time) / 1000 * this._speed;
+            const delta = (Date.now() - this._realTime) / 1000 * this._speed;
             this._time = (this._time + delta) % this._timeMax;
 
             if (this._time < this._timeMin)
                 this._time = this._timeMin;
         }
-        
+            
         this.scene.userData.time = this._time;
-        time = Date.now();
-        return time;
+        this._realTime = Date.now();
     }
 
     private setupStats() {
@@ -167,6 +191,10 @@ export class GraphicsContext {
         this.scene.remove(model);
     }
 
+    removeAll() {
+        this.scene.children.forEach(child => this.scene.remove(child));
+    }
+
     getMetadata(key: number) {
         return this.metadata[key];
     }
@@ -194,6 +222,8 @@ export class GraphicsContext {
         }
         
         this.renderer.resize(width, height);
+        console.log('resize', this);
+        this.pipeline.resize(width, height);
         this.navigation.controls.updateCamera(width, height);
     };
 }

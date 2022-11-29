@@ -2,17 +2,19 @@ import * as THREE from 'three';
 
 const vs3D = `
 varying vec3 fscolor;
+attribute vec3 instanceShift;
 
 uniform vec3 modelColor;
 uniform float size;
-uniform float scale;
 
 void main(){
-	fscolor = modelColor / 255.0;
-	vec3 transformed = position;
-	vec4 mvPosition = (modelViewMatrix * vec4(transformed, 1.0));
-    gl_PointSize = size * scale / -mvPosition.z;
-	gl_Position = projectionMatrix * mvPosition;
+	fscolor = modelColor;
+
+    vec3 CameraRight_worldspace = vec3(modelViewMatrix[0][0], modelViewMatrix[1][0], modelViewMatrix[2][0]);
+    vec3 CameraUp_worldspace = vec3(modelViewMatrix[0][1], modelViewMatrix[1][1], modelViewMatrix[2][1]);
+    vec3 transformed = instanceShift + (CameraRight_worldspace * position.x + CameraUp_worldspace * position.y) * size;
+
+	gl_Position = projectionMatrix * (modelViewMatrix * vec4(transformed, 1.0));
 }`;
 
 const fs3D = `
@@ -32,9 +34,8 @@ export class PointsMaterial extends THREE.ShaderMaterial {
         super({
             uniforms: {
                 size: { value: 10 },
-                scale: { value: 1000 },
                 grayscale: { value: 0 },
-                modelColor: { value: [255, 255, 255] },
+                modelColor: { value: [1, 1, 1] },
             },
             vertexShader: vs3D,
             fragmentShader: fs3D,

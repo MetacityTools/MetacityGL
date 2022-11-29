@@ -10,7 +10,7 @@ varying vec3 fscolor;
 varying float fsdot;
 
 void main(){
-	fscolor = color / 255.0;
+	fscolor = color;
     fsdot = dot;
 	vec3 transformed = position;
     transformed = transformed * dimensions * 0.9f + center;

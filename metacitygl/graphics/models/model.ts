@@ -29,8 +29,7 @@ function onBeforeRender(model: RenderableModel, renderer: THREE.WebGLRenderer, s
         if (model.timeSensitive)
             (material as THREE.ShaderMaterial).uniforms.time.value = scene.userData.time;
         (material as THREE.ShaderMaterial).uniformsNeedUpdate = true;
-    }
-    
+    }    
 }
 
 
@@ -100,32 +99,6 @@ export class BaseGroupModel extends THREE.Group implements Model {
 
     onAdd(context: GraphicsContext) {
         //no update, feel free to override
-    };
-}
-
-//THREE.Points
-export class BasePointModel extends THREE.Points implements RenderableModel {
-    timeSensitive = false;
-    _uniforms: {[key: string]: any} = {};
-
-    static create(data: any, uniforms: any): THREE.Object3D {
-        throw new Error("Static method create(data: any, uniforms: any) not implemented.");
-    };
-
-    toPickable() {
-        throw new Error("Method toPickable() not implemented.");
-    };
-
-    onAdd(context: GraphicsContext) {
-        //no update, feel free to override
-    };
-
-    set uniforms(values: any) {
-        updateUniforms(this, values);
-    }
-
-    onBeforeRender = (r: THREE.WebGLRenderer, s: THREE.Scene, c: THREE.Camera, b: THREE.BufferGeometry, m: THREE.Material, g: THREE.Group) => {
-        onBeforeRender(this, r, s, c, b, m, g);   
     };
 }
 
