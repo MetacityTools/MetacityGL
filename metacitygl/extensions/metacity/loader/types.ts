@@ -1,15 +1,19 @@
+import { Types } from "../../../utils";
+
 export interface MetacityLoaderInput {
     url: string;
     tileSize: number;
-    color: number;
+    color: Types.Color;
     styles: string[];
+    skipObjects: number[];
 }
 
 export interface MetacityWorkerInput {
     url: string;
     idOffset: number;
-    color: number;
+    color: Types.Color;
     styles: string[];
+    skipObjects: number[]; 
 }
 
 export interface MetacityLoaderOutput {

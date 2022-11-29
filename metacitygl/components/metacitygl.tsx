@@ -1,17 +1,13 @@
 import React from "react";
 import "./style.css"
-import { GraphicsContext } from "../graphics/context";
+import { GraphicsContext, UserInputProps } from "../graphics/context";
 import { Timeline } from "./timeline";
 import { MetacityLabel } from "./label";
 import { MetacityLayerProps } from "./layer";
 import { Utils } from "../metacitygl";
 
-interface MetacityGLProps {
-    background?: number;
-    antialias?: boolean;
+interface MetacityGLProps extends UserInputProps  {
     children?: React.ReactNode | React.ReactNode[];
-    target?: [number, number, number];
-    position?: [number, number, number];
     invertColors?: boolean;
 }
 
@@ -22,6 +18,7 @@ export function MetacityGL(props: MetacityGLProps) {
     const LoaderRef = React.useRef<HTMLDivElement>(null);
     const [hoverId, setHoverId] = React.useState<number|null>(0);
     const [metadataHover, setMetadataHover] = React.useState<any>(0);
+    const [tooltipOn, setTooltipOn] = React.useState<boolean>(false);
     const [hoverLocation, setHoverLocation] = React.useState<{ x: number, y: number }|null>(null);
     const children = React.Children.toArray(props.children);
     let layersLoaded = 0;
@@ -38,10 +35,7 @@ export function MetacityGL(props: MetacityGLProps) {
             const context = new GraphicsContext({
                 canvas: canvas,
                 container: container,
-                background: props.background ?? 0x000000,
-                target: props.target ?? [0, 0, 0],
-                position: props.position,
-                antialias: props.antialias,
+                ...props
             });
             setContext(context);
             context.updateSize();
@@ -69,7 +63,9 @@ export function MetacityGL(props: MetacityGLProps) {
 
 
     const onMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
-        //TODO implement hover
+        if(!tooltipOn)
+            return;
+
         const x = e.clientX;
         const y = e.clientY;
         const rect = e.currentTarget.getBoundingClientRect();
@@ -115,7 +111,6 @@ export function MetacityGL(props: MetacityGLProps) {
 
     const onLoaded = () => {
         layersLoaded += 1;
-        console.log("loaded", layersLoaded);
 
         if (LoaderRef.current) {
             const container = LoaderRef.current.children[0]
@@ -165,6 +160,7 @@ export function MetacityGL(props: MetacityGLProps) {
                                 left: hoverLocation?.x,
                                 top: hoverLocation?.y,
                                 pointerEvents: "none",
+                                display: tooltipOn ? "block" : "none",
                             }}
                         >
                             <pre>{JSON.stringify(metadataHover, null, 2) }</pre>
@@ -181,6 +177,13 @@ export function MetacityGL(props: MetacityGLProps) {
                         return React.cloneElement(child, { context: context, onLoaded });
                     }
                 })}
+                <div className="settings">
+                <h2>Settings</h2>
+                <label htmlFor="tooltipToggle" className="checkInput">
+                    <input type="checkbox" id="tooltipToggle" checked={tooltipOn} onChange={(e) => setTooltipOn(e.target.checked)}/>
+                    Show metadata on hover
+                </label>
+                </div>
                 <MetacityLabel context={context}/>
             </div>
         </div>

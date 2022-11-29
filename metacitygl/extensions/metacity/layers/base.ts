@@ -1,6 +1,7 @@
 import { MetacityLoaderOutput } from "../loader/types";
 import * as MetacityGL from "../../../metacitygl";
 import { LayerProps } from "../props";
+import { Types, Color } from "../../../utils";
 
 
 export interface MetacityTile {
@@ -17,7 +18,7 @@ export interface LayoutMetacityTile extends MetacityTile {
 
 interface InstancedPointsUniforms {
     size: number;
-    modelColor: [number, number, number];
+    modelColor: Types.Color;
     swapDistance: number;
 };
 
@@ -26,27 +27,30 @@ export class Layer {
     context?: MetacityGL.Graphics.GraphicsContext;
     api: string;
     pickable?: boolean;
-    color: number;
-    colorPlaceholder: number;
+    color: Types.Color;
+    colorPlaceholder: Types.Color;
     styles: string[] = [];
     radius: number;
     size: number;
     swapDistance: number;
     instance?: string;
     instanceModel?: MetacityGL.Utils.Types.InstanceData;
+    skipObjects: number[];
+    models: MetacityGL.Graphics.Models.Model[] = [];
 
     constructor(props: LayerProps) {
         this.api = props.api;
         this.pickable = props.pickable;
-        this.color = props.color || 0x000000;
-        this.colorPlaceholder = props.colorPlaceholder || 0x000000;
-        
+        this.color = Color.parseColor(props.color) ?? [0, 0, 0];
+        this.colorPlaceholder = Color.parseColor(props.colorPlaceholder) ?? [0, 0, 0];
+
         if (props.styles) {
             for (let style of props.styles) {
                 this.styles.push(style.serialize());
             }
         }
         
+        this.skipObjects = props.skipObjects || [];
         this.radius = props.radius ?? 2500;
         this.size = props.size ?? 1;
         this.swapDistance = props.swapDistance ?? 1000;
@@ -61,6 +65,7 @@ export class Layer {
             tileSize: tile.size,
             color: this.color,
             styles: this.styles,
+            skipObjects: this.skipObjects,
         }, (data: MetacityLoaderOutput) => {
             if (tile.placeholder)
                 this.context?.remove(tile.placeholder);
@@ -76,7 +81,7 @@ export class Layer {
         if (data.points) {
             const unfs = {
                 size: this.size,
-                modelColor: MetacityGL.Utils.Color.colorHexToArr(this.color),
+                modelColor: this.color,
                 swapDistance: this.swapDistance,
             };
 
@@ -85,6 +90,7 @@ export class Layer {
             } else {
                 const points = MetacityGL.Graphics.Models.PointModel.create(data.points, unfs);
                 this.context.add(points);
+                this.models.push(points);
             }
         }
     }
@@ -103,6 +109,7 @@ export class Layer {
             centroid: data.points!.centroid,
         }, unfs);
         this.context.add(points);
+        this.models.push(points);
     }
     
     private addMesh(data: MetacityLoaderOutput) {
@@ -115,6 +122,7 @@ export class Layer {
                 this.context.add(mesh, data.mesh.metadata);
             else
                 this.context.add(mesh);
+            this.models.push(mesh);
         }
     }
 }

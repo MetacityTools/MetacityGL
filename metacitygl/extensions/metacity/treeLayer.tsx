@@ -16,7 +16,7 @@ function Range(props: { layer: TreeLayer }) {
     );
 }
 export function MetacityTreeLayer(props: TreeLayerProps) {;
-    const { context, children, onLoaded } = props;
+    const { context, children, onLoaded, skipObjects } = props;
     const [layerInit, setLayerInit] = React.useState<boolean>(false);
     const [layer] = React.useState<TreeLayer>(new TreeLayer(props));
 

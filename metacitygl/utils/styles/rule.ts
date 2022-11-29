@@ -7,14 +7,14 @@ export abstract class StyleRule {
 }
 
 export class StyleForAll extends StyleRule {
-    $type = 'always';
+    static $type = 'always';
     apply() {
         return Math.random();
     }
 
     toJSON() {
         return {
-            $type: this.$type
+            $type: StyleForAll.$type
         };
     }
 }

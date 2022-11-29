@@ -14,7 +14,7 @@ type uniforms = {
 
 
 export class PointsInstancedModel extends BaseGroupModel {
-    static create(data: InstancedPointData, uniforms: uniforms) : THREE.Object3D {
+    static create(data: InstancedPointData, uniforms: uniforms) {
         const points = PointModel.create(data, uniforms);
         const mesh = InstancedMeshModel.create(data, uniforms);
         const group = new PointsInstancedModel();
@@ -23,7 +23,6 @@ export class PointsInstancedModel extends BaseGroupModel {
         const swp = uniforms.swapDistance || 1000;
         group.userData.swapDistance = swp * swp;
         group.userData.centroid = new THREE.Vector3(...data.centroid);
-
         return group;
     }
 
@@ -41,5 +40,9 @@ export class PointsInstancedModel extends BaseGroupModel {
 
         context.onNavChange = updateVisibility;
         updateVisibility(null, context.navigation.position);
+    }
+
+    toPickable(): void {
+        this.visible = false;
     }
 }

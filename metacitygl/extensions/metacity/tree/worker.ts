@@ -36,13 +36,12 @@ async function loadModel(message: any) {
     }
 }
 
-async function initWorker(api: string, color: number, styles: string[], config: TreeConfig) {
+async function initWorker(api: string, color: Utils.Types.Color, styles: string[], config: TreeConfig) {
     const meta = api + '/meta.json';
 
     try {
         const treedata = await axios.get(meta);
         const { data } = treedata;
-        const arrColor = Utils.Color.colorHexToArr(color);
         const stylesCls = [];
         for (let i = 0; i < styles.length; i++)
             stylesCls.push(Utils.Styles.Style.deserialize(styles[i]));
@@ -52,7 +51,7 @@ async function initWorker(api: string, color: number, styles: string[], config: 
             data,
             bmin: data.border.min,
             bmax: data.border.max,
-            color: arrColor,
+            color: color,
             styles: stylesCls,
         });
         console.log(`Tree requires MAX ${tree.spaceRequired() / 1024 / 1024} MB`);

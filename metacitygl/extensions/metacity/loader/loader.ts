@@ -17,6 +17,7 @@ export class MetacityLoader {
             idOffset: this.idOffset,
             color: data.color,
             styles: data.styles,
+            skipObjects: data.skipObjects,
         }, callback);
 
         this.idOffset += data.tileSize;

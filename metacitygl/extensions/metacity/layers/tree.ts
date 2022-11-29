@@ -8,7 +8,6 @@ import { TreeLayerProps } from "../props";
 export class TreeLayer extends Layer {
     treeWorker!: Worker;
     treeModel?: MetacityGL.Graphics.Models.TreeModel;
-
     treeConfig: TreeConfig;
 
     constructor(props: TreeLayerProps) {
@@ -57,7 +56,7 @@ export class TreeLayer extends Layer {
 
     updateView(data: TreeWorkerOutput) {
         if (!this.context)
-        return;
+            return;
 
         data.tilesToLoad.forEach((tile) => {
             let pch;
@@ -74,6 +73,7 @@ export class TreeLayer extends Layer {
 
         if (this.treeModel) {
             this.treeModel.updateBuffer(data as MetacityGL.Utils.Types.TreeData);
+            this.context.add(this.treeModel);
         } else {
             if (data.array) 
             {

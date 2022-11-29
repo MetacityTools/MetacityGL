@@ -33,9 +33,9 @@ export class GridLayer extends Layer {
         if (!this.context)
         return;
 
-        const c = MetacityGL.Utils.Color.colorHexToArr(this.colorPlaceholder);
+        const c = this.colorPlaceholder;
         for (let tile of this.layout.tiles) {
-            const cOff = (Math.random() - 1.0) * 15;
+            const cOff = ((Math.random() - 1.0) * 15 / 255);
             const placeholder = MetacityGL.Graphics.Models.TileModel.create({
                 center: [(tile.x + 0.5) * this.layout.tileWidth, (tile.y + 0.5) * this.layout.tileHeight, 0],
                 width: this.layout.tileWidth * 0.95,

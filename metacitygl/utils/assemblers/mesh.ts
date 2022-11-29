@@ -21,7 +21,8 @@ export class MeshAssembler {
             
         const vertexCount = vertices.length / 3;
         for (let i = 0; i < vertexCount; i++) {
-            this.colors.push(rgb[0], rgb[1], rgb[2]);
+            //TODO does it have to be byte?
+            this.colors.push(rgb[0] * 255, rgb[1] * 255, rgb[2] * 255);
         }
 
         if (this.useMetadata) {

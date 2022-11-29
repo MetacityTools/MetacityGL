@@ -5,6 +5,7 @@ import * as THREE from "three";
 
 
 type uniforms = {
+    size?: number,
     modelColor?: [number, number, number],
 }
 

@@ -6,7 +6,6 @@ export interface NavigationProps extends MapControlsProps {
     target?: [number, number, number];
     position?: [number, number, number];
     offset?: number; 
-    canvas: HTMLCanvasElement;
 }
 
 
@@ -15,9 +14,9 @@ export class Navigation {
     readonly controls: MapControls;
     private offset: number;
 
-    constructor(props: NavigationProps) {
+    constructor(props: NavigationProps, canvas: HTMLCanvasElement) {
         let { position, target } = parseUrl();
-        this.controls = new MapControls(props, props.canvas);
+        this.controls = new MapControls(props, canvas);
         this.offset = props.offset ?? 5000;
         target = target || props.target || [0, 0, 0];        
         position = position || props.position || this.isoPosition(target);
