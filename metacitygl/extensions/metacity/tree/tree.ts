@@ -135,7 +135,7 @@ export class QuadTree {
             c = styles[i].apply(this.metadata) ?? c;
 
         if (c)
-            this.color = Utils.Color.colorHexToArr(c);
+            this.color = c;
     }
 
     query(position: { x: number, y: number, z: number }, q: TreeQuery) {
