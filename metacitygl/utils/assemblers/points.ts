@@ -1,5 +1,5 @@
 import { computeBBox } from "../utils/bbox";
-import { colorHexToArr } from "../utils/color";
+import { colorHexToArr255 } from "../utils/color";
 
 
 export class PointsAssembler {
@@ -22,7 +22,7 @@ export class PointsAssembler {
 
         if (this.useMetadata) {
             const vertexCount = vertices.length / 3;
-            const idcolor = colorHexToArr(this.id);
+            const idcolor = colorHexToArr255(this.id);
             for (let i = 0; i < vertexCount; i++) {
                 this.ids.push(idcolor[0], idcolor[1], idcolor[2]);
             }

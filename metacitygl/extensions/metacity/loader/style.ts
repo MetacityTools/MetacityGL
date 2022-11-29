@@ -28,10 +28,11 @@ function computeColorBuffer(ids: Uint8Array, colorBuffer: Uint8Array, colorTable
     for (let offset = 0; offset < ids.length; offset += 3) {
         id = idToNumber(offset);
         color = colorTable.get(id);
+
         if (color) {
-            colorBuffer[offset] = color[0];
-            colorBuffer[offset + 1] = color[1];
-            colorBuffer[offset + 2] = color[2];
+            colorBuffer[offset] = color[0] * 255;
+            colorBuffer[offset + 1] = color[1] * 255;
+            colorBuffer[offset + 2] = color[2] * 255;
         }
     }
     return colorBuffer;

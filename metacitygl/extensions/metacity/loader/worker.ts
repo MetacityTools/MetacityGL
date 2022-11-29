@@ -22,15 +22,14 @@ async function loadModel(message: any) {
         const useMetadata = styles !== undefined && styles.length > 0;
         const meshASM = new Utils.Assemblers.MeshAssembler(idOffset, useMetadata);
         
-        let layerID = 0;
         for (let i = 0; i < groups.meshes.length; i++) {
             const mesh = groups.meshes[i];
             if (!mesh.meta)
                 mesh.meta = {};
             mesh.meta["url"] = url;
-            mesh.meta["layerID"] = layerID++;
-
-            if (!skipObjects.includes(mesh.meta["layerID"]))
+            //TODO resolve skipping based on metadata
+            //mesh.meta["layerID"] = layerID++;
+            //if (!skipObjects.includes(mesh.meta["layerID"]))
                 meshASM.addMesh(mesh.positions, color, mesh.meta);
         }
 
@@ -40,9 +39,8 @@ async function loadModel(message: any) {
             if (!points.meta)
                 points.meta = {};
             points.meta["url"] = url;
-            points.meta["layerID"] = layerID++;
-
-            if (!skipObjects.includes(points.meta["layerID"]))
+            //points.meta["layerID"] = layerID++;
+            //if (!skipObjects.includes(points.meta["layerID"]))
                 pointsASM.addPoints(points.positions, points.meta);
         }
 
